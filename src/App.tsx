@@ -1,11 +1,7 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
+import { Layout } from "./components/Layout";
 
 // import Page
 import { HomePage } from "./pages/Home";
@@ -16,56 +12,63 @@ import { CreateEditPage } from "./pages/Editor";
 import { ArticlePage } from "./pages/Article";
 import { ProfilePage } from "./pages/Profile";
 import { FavouritesPage } from "./pages/Favourites";
-import { Header } from "./layouts/Header";
-import { Footer } from "./layouts/Footer";
 import { GlobalContext } from "./globalContext";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const contextValue = {
     isLoggedIn,
     setIsLoggedIn,
+    currentUser,
+    setCurrentUser,
   };
 
   const routers = createBrowserRouter([
     {
-      path: "/",
-      element: <HomePage />,
-    },
-    {
-      path: "/login",
-      element: <LoginPage />,
-    },
-    {
-      path: "/register",
-      element: <RegisterPage />,
-    },
-    {
-      path: "/settings",
-      element: <SettingsPage />,
-    },
-    {
-      path: "/editor",
-      element: <CreateEditPage />,
+      path: "",
+      element: <Layout />,
       children: [
         {
-          path: "/editor/:article-slug-here",
-          element: <CreateEditPage />,
+          path: "",
+          element: <HomePage />,
         },
-      ],
-    },
-    {
-      path: "/article/:article-slug-here",
-      element: <ArticlePage />,
-    },
-    {
-      path: "/profile/:username",
-      element: <ProfilePage />,
-      children: [
         {
-          path: "favourites",
-          element: <FavouritesPage />,
+          path: "login",
+          element: <LoginPage />,
+        },
+        {
+          path: "register",
+          element: <RegisterPage />,
+        },
+        {
+          path: "settings",
+          element: <SettingsPage />,
+        },
+        {
+          path: "editor",
+          element: <CreateEditPage />,
+          children: [
+            {
+              path: ":articleslug",
+              element: <CreateEditPage />,
+            },
+          ],
+        },
+        {
+          path: "article/:articleslug",
+          element: <ArticlePage />,
+        },
+        {
+          path: "profile/:username",
+          element: <ProfilePage />,
+          children: [
+            {
+              path: "favourites",
+              element: <FavouritesPage />,
+            },
+          ],
         },
       ],
     },
@@ -74,8 +77,6 @@ function App() {
   return (
     <>
       <GlobalContext.Provider value={contextValue}>
-        <Header />
-        <Footer />
         <RouterProvider router={routers} />
       </GlobalContext.Provider>
     </>

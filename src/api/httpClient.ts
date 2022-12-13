@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getToken = () => {
   const token = sessionStorage.getItem("userToken");
-  const bearer = `Bearer ${token}`;
+  const bearer = token ? `Bearer ${token}` : undefined;
   return bearer;
 };
 
@@ -17,6 +17,5 @@ export const httpClient = axios.create({
 
 httpClient.interceptors.request.use((config: any) => {
   config.headers.Authorization = getToken();
-  console.log(config);
   return config;
 });

@@ -9,7 +9,7 @@ export const LoginPage = () => {
   const [error, setError] = useState(false);
   const [email, setEmail] = useState("hohung789@test.com");
   const [password, setPassword] = useState("123123");
-  const { setIsLoggedIn } = useContext(GlobalContext);
+  const { setIsLoggedIn, setCurrentUser } = useContext(GlobalContext);
   const navigate = useNavigate();
 
   const login = () => {
@@ -22,7 +22,7 @@ export const LoginPage = () => {
       })
       .then((response: any) => {
         sessionStorage.setItem("userToken", response.data.user.token);
-        console.log(response.data);
+        setCurrentUser(response.data);
         setIsLoggedIn(true);
         navigate("/");
       })

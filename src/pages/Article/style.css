@@ -1,0 +1,21 @@
+.banner {
+  background-color: rgb(60, 58, 58);
+  color: #fff;
+  padding: 20px 170px;
+}
+
+.article-meta {
+  height: 30px;
+}
+
+.comment-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.article-body {
+  font-size: 20px;
+  padding: 20px 140px;
+  font-weight: 400;
+}

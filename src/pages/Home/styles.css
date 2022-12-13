@@ -24,12 +24,18 @@
   width: 50px;
   height: 30px;
   font-size: 14px;
+  padding: 4px 5px;
 }
 
 .article-content {
   font-size: 18px;
   font-weight: 500;
   cursor: pointer;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .article-description {
