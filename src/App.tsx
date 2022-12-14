@@ -17,12 +17,15 @@ import { GlobalContext } from "./globalContext";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [articles, setArticles] = useState([]);
 
   const contextValue = {
     isLoggedIn,
     setIsLoggedIn,
     currentUser,
     setCurrentUser,
+    articles,
+    setArticles,
   };
 
   const routers = createBrowserRouter([
@@ -31,7 +34,7 @@ function App() {
       element: <Layout />,
       children: [
         {
-          path: "",
+          path: "/",
           element: <HomePage />,
         },
         {
@@ -51,13 +54,13 @@ function App() {
           element: <CreateEditPage />,
           children: [
             {
-              path: ":articleslug",
+              path: ":slug",
               element: <CreateEditPage />,
             },
           ],
         },
         {
-          path: "article/:articleslug",
+          path: "article/:slug",
           element: <ArticlePage />,
         },
         {

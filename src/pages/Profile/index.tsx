@@ -1,24 +1,22 @@
 import "./styles.css";
 import { Nav, Row, Button } from "react-bootstrap";
 import { IoSettingsSharp } from "react-icons/io5";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { httpClient } from "../../api/httpClient";
-import { GlobalContext } from "../../globalContext";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export const ProfilePage = () => {
   const [profile, setProfile] = useState({
     profile: { image: "", username: "", bio: "" },
   });
-  const { currentUser } = useContext(GlobalContext);
+  const { username } = useParams();
 
   useEffect(() => {
-    httpClient
-      .get(`profiles/${currentUser.user.username}`)
-      .then((response: any) => setProfile(response.data));
-  }, []);
-
-  console.log(profile);
+    httpClient.get(`profiles/${username}`).then((response: any) => {
+      setProfile(response.data);
+    });
+  }, [username]);
 
   return (
     <>
@@ -60,9 +58,9 @@ export const ProfilePage = () => {
                     alt=""
                   />
                   <div className="mx-2">
-                    <a className="article-name-user m-0" href="">
+                    <Link className="article-name-user m-0" to="">
                       Eric Simons
-                    </a>
+                    </Link>
                     <p className="article-date">October 9, 2022</p>
                   </div>
                 </div>
@@ -98,9 +96,12 @@ export const ProfilePage = () => {
                     />
                   </a>
                   <div className="mx-2">
-                    <a href="" className="article-name-user m-0">
+                    <Link
+                      to="/profile/Albert Pai"
+                      className="article-name-user m-0"
+                    >
                       Albert Pai
-                    </a>
+                    </Link>
                     <p className="article-date">October 9, 2022</p>
                   </div>
                 </div>
@@ -124,9 +125,9 @@ export const ProfilePage = () => {
                 </p>
               </a>
               <div className="d-flex justify-content-between">
-                <a href="" className="read-more">
+                <Link to="" className="read-more">
                   Read more...
-                </a>
+                </Link>
                 <div className="article-tag">
                   <span>sequi</span>
                   <span>doloribus</span>

@@ -16,6 +16,15 @@
 
 .article-body {
   font-size: 20px;
-  padding: 20px 140px;
+  padding: 20px 120px;
   font-weight: 400;
+}
+
+.trash-icon {
+  cursor: pointer;
+  color: rgb(115, 112, 112);
+}
+
+.trash-icon:hover {
+  color: #000;
 }
