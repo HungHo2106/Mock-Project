@@ -12,15 +12,17 @@ export const NavbarComponent = () => {
     <>
       <Navbar bg="info px-5 ">
         <Container>
-          <Navbar.Brand href="/">
-            <img
-              alt=""
-              src={logo}
-              width="30"
-              height="30"
-              className="d-inline-block align-top text-success"
-            />
-            <span className="mx-2 text-danger">My Blog</span>
+          <Navbar.Brand>
+            <Link to="/" className="text-decoration-none">
+              <img
+                alt=""
+                src={logo}
+                width="30"
+                height="30"
+                className="d-inline-block align-top text-success"
+              />
+              <span className="mx-2 text-danger ">My Blog</span>
+            </Link>
           </Navbar.Brand>
           <Nav className="d-flex justify-content-end ">
             <Link to="/" className="text-decoration-none text-secondary mx-2">

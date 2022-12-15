@@ -10,7 +10,7 @@ import moment from "moment";
 export const HomePage = () => {
   const { isLoggedIn } = useContext(GlobalContext);
   const { articles, setArticles } = useContext(GlobalContext);
-  const [mode, setMode] = useState("global-feed");
+  const [mode, setMode] = useState("your-feed");
 
   const getArticles = () => {
     if (mode === "global-feed") {
@@ -25,9 +25,23 @@ export const HomePage = () => {
     }
   };
 
+  console.log(articles);
+
   useEffect(() => {
     getArticles();
   }, [mode]);
+
+  const favorite = (slug: any) => {
+    httpClient.post(`articles/${slug}/favorite`).then((response: any) => {
+      console.log(response.data);
+    });
+  };
+
+  const unfavorite = (slug: any) => {
+    httpClient.delete(`articles/${slug}/favorite`).then((response: any) => {
+      console.log(response.data);
+    });
+  };
 
   return (
     <Row className="px-5 mx-5 mb-5 mt-3 pb-5">
@@ -40,6 +54,7 @@ export const HomePage = () => {
                   href=""
                   className="text-success"
                   onClick={() => setMode("your-feed")}
+                  active={mode === "your-feed"}
                 >
                   Your Feed
                 </Nav.Link>
@@ -51,7 +66,7 @@ export const HomePage = () => {
                 href=""
                 className="text-success"
                 onClick={() => setMode("global-feed")}
-                defaultChecked
+                active={mode === "global-feed"}
               >
                 Global Feed
               </Nav.Link>
@@ -81,8 +96,12 @@ export const HomePage = () => {
                     </p>
                   </div>
                 </div>
+                {/* Tạo hàm xác minh đã like -> isLiked  */}
                 <div>
-                  <button className="btn-heart btn btn-outline-success d-flex justify-content-center align-items-center mt-3">
+                  <button
+                    onClick={() => favorite(article.slug)}
+                    className="btn-heart btn btn-outline-success d-flex justify-content-center align-items-center mt-3"
+                  >
                     <IoHeart className="mx-1" />{" "}
                     <span>{article.favoritesCount}</span>
                   </button>

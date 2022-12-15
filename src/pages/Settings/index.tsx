@@ -28,7 +28,6 @@ export const SettingsPage = () => {
         },
       })
       .then((response: any) => {
-        sessionStorage.setItem("userToken", response.data.user.token);
         setCurrentUser(response.data);
         navigate(`/profile/${currentUser.user.username}`);
       });

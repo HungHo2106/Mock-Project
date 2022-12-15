@@ -21,7 +21,7 @@ export const ArticlePage = () => {
     updatedAt: "",
   });
   const { slug } = useParams();
-  const { currentUser } = useContext(GlobalContext);
+  const { currentUser, isLoggedIn } = useContext(GlobalContext);
   const [comment, setComment] = useState("");
   const [commentList, setCommentList] = useState([]);
   const [profileUser, setProfileUser] = useState({
@@ -35,31 +35,42 @@ export const ArticlePage = () => {
   const navigate = useNavigate();
 
   const follow = () => {
-    httpClient
-      .post(`profiles/${articleDetail.author.username}/follow`)
-      .then((response: any) => {
-        setProfileUser(response.data);
-      });
+    if (isLoggedIn) {
+      httpClient
+        .post(`profiles/${articleDetail.author.username}/follow`)
+        .then((response: any) => {
+          setProfileUser(response.data);
+        });
+    } else {
+      navigate("/login");
+    }
   };
 
   const unfollow = () => {
-    httpClient
-      .delete(`profiles/${articleDetail.author.username}/follow`)
-      .then((response: any) => {
-        setProfileUser(response.data);
-      });
+    if (isLoggedIn) {
+      httpClient
+        .delete(`profiles/${articleDetail.author.username}/follow`)
+        .then((response: any) => {
+          setProfileUser(response.data);
+        });
+    } else {
+      navigate("/login");
+    }
   };
 
   useEffect(() => {
     httpClient.get(`articles/${slug}`).then((response: any) => {
       setArticleDetail(response.data.article);
     });
+  }, []);
+
+  useEffect(() => {
     httpClient
       .get(`profiles/${articleDetail.author.username}`)
       .then((response: any) => {
         setProfileUser(response.data);
       });
-  }, [slug]);
+  }, [articleDetail]);
 
   console.log(profileUser);
 
@@ -134,15 +145,14 @@ export const ArticlePage = () => {
               ) : profileUser.profile.following ? (
                 <span onClick={unfollow}>
                   <FaPlus className="mx-1" />
-                  <span>Unfollow</span>
+                  <span>Unfollow</span> {articleDetail.author.username}
                 </span>
               ) : (
                 <span onClick={follow}>
                   <FaPlus className="mx-1" />
-                  <span>Follow</span>
+                  <span>Follow</span> {articleDetail.author.username}
                 </span>
-              )}{" "}
-              {articleDetail.author.username})
+              )}
             </button>
             &nbsp;&nbsp; &nbsp;
             {articleDetail.author.username === currentUser.user.username ? (
@@ -221,15 +231,14 @@ export const ArticlePage = () => {
                 ) : profileUser.profile.following ? (
                   <span onClick={unfollow}>
                     <FaPlus className="mx-1" />
-                    <span>Unfollow</span>
+                    <span>Unfollow</span> {articleDetail.author.username}
                   </span>
                 ) : (
                   <span onClick={follow}>
                     <FaPlus className="mx-1" />
-                    <span>Follow</span>
+                    <span>Follow</span> {articleDetail.author.username}
                   </span>
-                )}{" "}
-                {articleDetail.author.username}
+                )}
               </button>
               &nbsp;&nbsp; &nbsp;
               {articleDetail.author.username === currentUser.user.username ? (
@@ -266,73 +275,87 @@ export const ArticlePage = () => {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col-xs-12 col-md-8 offset-md-2  my-3">
-              <form
-                className="card comment-form"
-                onSubmit={(e: any) => e.preventDefault()}
-              >
-                <div className="card-block">
-                  <textarea
-                    className="form-control"
-                    placeholder="Write a comment"
-                    rows={3}
-                    value={comment}
-                    onChange={(e: any) => setComment(e.target.value)}
-                  ></textarea>
-                </div>
-                <div className="d-flex justify-content-between align-items-center p-3">
-                  <Link to={`/profile/${currentUser.user.username}`}>
-                    <img
-                      className="article-avatar"
-                      src={currentUser.user.image}
-                      alt=""
-                    />
-                  </Link>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={postComment}
-                  >
-                    Post Comment
-                  </button>
-                </div>
-              </form>
+          {isLoggedIn ? (
+            <div className="row">
+              <div className="col-xs-12 col-md-8 offset-md-2  my-3">
+                <form
+                  className="card comment-form"
+                  onSubmit={(e: any) => e.preventDefault()}
+                >
+                  <div className="card-block">
+                    <textarea
+                      className="form-control"
+                      placeholder="Write a comment"
+                      rows={3}
+                      value={comment}
+                      onChange={(e: any) => setComment(e.target.value)}
+                    ></textarea>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center p-3">
+                    <Link to={`/profile/${currentUser.user.username}`}>
+                      <img
+                        className="article-avatar"
+                        src={currentUser.user.image}
+                        alt=""
+                      />
+                    </Link>
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={postComment}
+                    >
+                      Post Comment
+                    </button>
+                  </div>
+                </form>
 
-              {commentList &&
-                commentList.length > 0 &&
-                commentList.map((comment: any) => (
-                  <div className="card my-3" key={comment.id}>
-                    <div className="card-block p-3">
-                      <p className="text-secondary">{comment.body}</p>
-                    </div>
-                    <div className="d-flex  p-2 bg-light align-items-center justify-content-between ">
-                      <div className="d-flex">
-                        <img
-                          className="comment-avatar"
-                          src={comment.author.image}
-                          alt=""
-                        />
+                {commentList &&
+                  commentList.length > 0 &&
+                  commentList.map((comment: any) => (
+                    <div className="card my-3" key={comment.id}>
+                      <div className="card-block p-3">
+                        <p className="text-secondary">{comment.body}</p>
+                      </div>
+                      <div className="d-flex  p-2 bg-light align-items-center justify-content-between ">
+                        <div className="d-flex">
+                          <img
+                            className="comment-avatar"
+                            src={comment.author.image}
+                            alt=""
+                          />
 
-                        <div className="d-flex mx-2 flex-row justify-content-between">
-                          <Link
-                            className="article-date text-decoration-none text-secondary"
-                            to={`/profile/${comment.author.username}`}
-                          >
-                            {comment.author.username}
-                          </Link>
-                          <p className="article-date text-secondary m-0 mx-1">
-                            {moment(comment.createdAt).format("MMMM D, YYYY")}
-                          </p>
+                          <div className="d-flex mx-2 flex-row justify-content-between">
+                            <Link
+                              className="article-date text-decoration-none text-secondary"
+                              to={`/profile/${comment.author.username}`}
+                            >
+                              {comment.author.username}
+                            </Link>
+                            <p className="article-date text-secondary m-0 mx-1">
+                              {moment(comment.createdAt).format("MMMM D, YYYY")}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="trash-icon">
+                          <IoTrash />
                         </div>
                       </div>
-                      <div className="trash-icon">
-                        <IoTrash />
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <p className="text-center">
+              <Link to="/login" className="text-decoration-none">
+                {" "}
+                Sign in
+              </Link>
+              &nbsp; or &nbsp;
+              <Link to="/register" className="text-decoration-none">
+                Sign up
+              </Link>{" "}
+              to add comments on this article.
+            </p>
+          )}
         </div>
       </div>
     </>

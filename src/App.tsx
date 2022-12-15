@@ -16,7 +16,15 @@ import { GlobalContext } from "./globalContext";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState({
+    user: {
+      bio: "",
+      email: "",
+      image: "",
+      token: "",
+      username: "",
+    },
+  });
   const [articles, setArticles] = useState([]);
 
   const contextValue = {

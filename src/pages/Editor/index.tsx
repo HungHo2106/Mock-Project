@@ -27,18 +27,19 @@ export const CreateEditPage = () => {
 
   const update = () => {
     httpClient
-      .put("articles", {
+      .put(`articles/${slug}`, {
         article: {
           title: titleArticle,
           description: aboutArticle,
           body: contentArticle,
-          tagList: [tagArticle],
         },
       })
       .then((response: any) => {
+        setArticles(response.data.article, articles);
         console.log(response.data);
         navigate(`/article/${response.data.article.slug}`);
-      });
+      })
+      .catch((error: any) => console.log(error.data));
   };
 
   const publish = () => {
@@ -94,13 +95,23 @@ export const CreateEditPage = () => {
                   onChange={(e: any) => setTagArticle(e.target.value)}
                 />
                 <div className="d-flex justify-content-end">
-                  <button
-                    className="btn btn-success "
-                    type="button"
-                    onClick={slug ? update : publish}
-                  >
-                    Publish Article
-                  </button>
+                  {slug ? (
+                    <button
+                      className="btn btn-success "
+                      type="button"
+                      onClick={update}
+                    >
+                      Update Article
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-success "
+                      type="button"
+                      onClick={publish}
+                    >
+                      Publish Article
+                    </button>
+                  )}
                 </div>
               </form>
             </div>

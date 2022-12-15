@@ -1,22 +1,66 @@
 import "./styles.css";
-import { Nav, Row, Button } from "react-bootstrap";
-import { IoSettingsSharp } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { Nav, Row } from "react-bootstrap";
+import { IoSettingsSharp, IoHeart } from "react-icons/io5";
+import { FaPlus, FaCheck } from "react-icons/fa";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../api/httpClient";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { GlobalContext } from "../../globalContext";
+import moment from "moment";
 
 export const ProfilePage = () => {
   const [profile, setProfile] = useState({
-    profile: { image: "", username: "", bio: "" },
+    profile: { image: "", username: "", bio: "", following: "" },
   });
   const { username } = useParams();
+  const { currentUser, isLoggedIn } = useContext(GlobalContext);
+  const [myArticle, setMyArticle] = useState([]);
+  const [mode, setMode] = useState("my-articles");
+  const navigate = useNavigate();
 
   useEffect(() => {
     httpClient.get(`profiles/${username}`).then((response: any) => {
       setProfile(response.data);
     });
   }, [username]);
+
+  useEffect(() => {
+    if (mode === "my-articles") {
+      httpClient.get(`articles?author=${username}`).then((response: any) => {
+        setMyArticle(response.data.articles);
+      });
+    } else if (mode === "favorited-articles") {
+      httpClient.get(`articles?favorited=${username}`).then((response: any) => {
+        setMyArticle(response.data.articles);
+      });
+    }
+  }, [username, mode]);
+
+  const follow = () => {
+    if (isLoggedIn) {
+      httpClient
+        .post(`profiles/${profile.profile.username}/follow`)
+        .then((response: any) => {
+          setProfile(response.data);
+        });
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const unfollow = () => {
+    if (isLoggedIn) {
+      httpClient
+        .delete(`profiles/${profile.profile.username}/follow`)
+        .then((response: any) => {
+          setProfile(response.data);
+        });
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <>
@@ -28,11 +72,34 @@ export const ProfilePage = () => {
             <p>{profile.profile.bio}</p>
           </div>
           <div className="col-12 d-flex justify-content-end">
-            <Link to="/settings">
-              <button className="btn btn-sm btn-outline-secondary action-btn mx-4">
-                <IoSettingsSharp className="mb-1" /> Edit Profile Settings
-              </button>
-            </Link>
+            {profile.profile.username === currentUser.user.username ? (
+              <Link to="/settings">
+                <button className="btn btn-sm btn-outline-secondary action-btn mx-4">
+                  <IoSettingsSharp className="mb-1" />{" "}
+                  <span>Edit Profile Settings</span>
+                </button>
+              </Link>
+            ) : (
+              <>
+                {profile.profile.following ? (
+                  <button
+                    className="btn btn-sm btn-success action-btn mx-4"
+                    onClick={unfollow}
+                  >
+                    <FaCheck className="mb-1" />{" "}
+                    <span>Unfollow {profile.profile.username}</span>
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-sm btn-secondary action-btn mx-4"
+                    onClick={follow}
+                  >
+                    <FaPlus className="mb-1" />{" "}
+                    <span>Follow {profile.profile.username}</span>
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </div>
 
@@ -41,100 +108,78 @@ export const ProfilePage = () => {
             <Row>
               <Nav variant="tabs" defaultActiveKey="/">
                 <Nav.Item>
-                  <Nav.Link href="">My Articles</Nav.Link>
+                  <Nav.Link
+                    onClick={() => setMode("my-articles")}
+                    className="text-success"
+                    active={mode === "my-articles"}
+                  >
+                    My Articles
+                  </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link href="">Favourited Articles</Nav.Link>
+                  <Nav.Link
+                    onClick={() => setMode("favorited-articles")}
+                    className="text-success"
+                    active={mode === "favorited-articles"}
+                  >
+                    Favourited Articles
+                  </Nav.Link>
                 </Nav.Item>
               </Nav>
             </Row>
 
-            <div>
-              <div className="d-flex justify-content-between">
-                <div className="d-flex mt-3">
-                  <img
-                    className="article-avatar mt-2"
-                    src="https://api.realworld.io/images/demo-avatar.png"
-                    alt=""
-                  />
-                  <div className="mx-2">
-                    <Link className="article-name-user m-0" to="">
-                      Eric Simons
+            {myArticle &&
+              myArticle.length > 0 &&
+              myArticle.map((article: any, index: number) => (
+                <div key={index}>
+                  <div className="d-flex justify-content-between">
+                    <div className="d-flex mt-3">
+                      <Link to={`profile/${article.author.username}`}>
+                        <img
+                          src={article.author.image}
+                          className="article-avatar mt-2"
+                          alt=""
+                        />
+                      </Link>
+                      <div className="mx-2">
+                        <Link
+                          to={`profile/${article.author.username}`}
+                          className="article-name-user m-0"
+                        >
+                          {article.author.username}
+                        </Link>
+                        <p className="article-date">
+                          {moment(article.updatedAt).format("YYYY M, DD")}
+                        </p>
+                      </div>
+                    </div>
+                    <button className="btn-heart btn btn-outline-success d-flex justify-content-center align-items-center mt-3">
+                      <IoHeart className="mx-1" /> {article.favoritesCount}
+                    </button>
+                  </div>
+                  <Link
+                    to={`article/${article.slug}`}
+                    className="text-decoration-none text-secondary"
+                  >
+                    <h1 className="article-content">{article.body}</h1>
+                    <p className="article-description">{article.description}</p>
+                  </Link>
+                  <div className="d-flex justify-content-between">
+                    <Link to={`article/${article.slug}`} className="read-more">
+                      Read more...
                     </Link>
-                    <p className="article-date">October 9, 2022</p>
+                    <div className="article-tag">
+                      {article.tagList.map((tag: any, index: number) =>
+                        tag ? (
+                          <span key={index}>{tag}</span>
+                        ) : (
+                          <div key={index}></div>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <Button
-                    variant="success"
-                    className="btn-heart d-flex justify-content-center align-items-center mt-3"
-                  >
-                    {" "}
-                    294
-                  </Button>
-                </div>
-              </div>
-              <a href="" className="text-decoration-none text-secondary">
-                <h1 className="article-content">
-                  How to build webapps that scale
-                </h1>
-                <p className="article-description">
-                  This is the description for the post.
-                </p>
-                <span className="read-more">Read more...</span>
-              </a>
-            </div>
-
-            <div>
-              <div className="d-flex justify-content-between">
-                <div className="d-flex mt-3">
-                  <a href="">
-                    <img
-                      src="http://i.imgur.com/N4VcUeJ.jpg"
-                      className="article-avatar mt-2"
-                      alt=""
-                    />
-                  </a>
-                  <div className="mx-2">
-                    <Link
-                      to="/profile/Albert Pai"
-                      className="article-name-user m-0"
-                    >
-                      Albert Pai
-                    </Link>
-                    <p className="article-date">October 9, 2022</p>
-                  </div>
-                </div>
-                <div>
-                  <Button
-                    variant="success"
-                    className="btn-heart d-flex justify-content-center align-items-center mt-3"
-                  >
-                    {" "}
-                    32
-                  </Button>
-                </div>
-              </div>
-              <a href="" className="text-decoration-none text-secondary">
-                <h1 className="article-content">
-                  The song you won't ever stop singing. No matter how hard you
-                  try.
-                </h1>
-                <p className="article-description">
-                  This is the description for the post.
-                </p>
-              </a>
-              <div className="d-flex justify-content-between">
-                <Link to="" className="read-more">
-                  Read more...
-                </Link>
-                <div className="article-tag">
-                  <span>sequi</span>
-                  <span>doloribus</span>
-                  <span>vitae</span>
-                </div>
-              </div>
-            </div>
+              ))}
           </div>
         </div>
       </div>
