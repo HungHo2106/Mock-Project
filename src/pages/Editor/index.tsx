@@ -36,7 +36,6 @@ export const CreateEditPage = () => {
       })
       .then((response: any) => {
         setArticles(response.data.article, articles);
-        console.log(response.data);
         navigate(`/article/${response.data.article.slug}`);
       })
       .catch((error: any) => console.log(error.data));
@@ -54,7 +53,6 @@ export const CreateEditPage = () => {
       })
       .then((response: any) => {
         setArticles(response.data.article, articles);
-        console.log(response.data);
         navigate(`/article/${response.data.article.slug}`);
       });
   };

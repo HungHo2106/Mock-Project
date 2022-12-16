@@ -8,7 +8,7 @@ import { GlobalContext } from "../../globalContext";
 export const LoginPage = () => {
   const [error, setError] = useState(false);
   const [email, setEmail] = useState("hohung987@test.com");
-  const [password, setPassword] = useState("321321");
+  const [password, setPassword] = useState("456456");
   const { setIsLoggedIn, setCurrentUser } = useContext(GlobalContext);
   const navigate = useNavigate();
 

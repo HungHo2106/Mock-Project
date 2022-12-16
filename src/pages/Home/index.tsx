@@ -4,13 +4,16 @@ import { httpClient } from "../../api/httpClient";
 import "./styles.css";
 import { IoHeart } from "react-icons/io5";
 import { GlobalContext } from "../../globalContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 
 export const HomePage = () => {
   const { isLoggedIn } = useContext(GlobalContext);
   const { articles, setArticles } = useContext(GlobalContext);
-  const [mode, setMode] = useState("your-feed");
+  const [mode, setMode] = useState("global-feed");
+  const [tags, setTags] = useState([]);
+  const [filterTag, setFilterTag] = useState("");
+  const navigate = useNavigate();
 
   const getArticles = () => {
     if (mode === "global-feed") {
@@ -22,30 +25,46 @@ export const HomePage = () => {
       httpClient
         .get("articles/feed")
         .then((response: any) => setArticles(response.data.articles));
+    } else if (mode === "filter-tags") {
+      httpClient
+        .get(`articles?tag=${filterTag}`)
+        .then((response: any) => setArticles(response.data.articles));
     }
   };
 
-  console.log(articles);
+  useEffect(() => {
+    httpClient.get("tags").then((response: any) => {
+      setTags(response.data.tags);
+    });
+  }, [articles]);
 
   useEffect(() => {
     getArticles();
-  }, [mode]);
+  }, [mode, filterTag]);
 
   const favorite = (slug: any) => {
-    httpClient.post(`articles/${slug}/favorite`).then((response: any) => {
-      console.log(response.data);
-    });
+    if (isLoggedIn) {
+      httpClient.post(`articles/${slug}/favorite`).then(() => {
+        getArticles();
+      });
+    } else {
+      navigate("/login");
+    }
   };
 
   const unfavorite = (slug: any) => {
-    httpClient.delete(`articles/${slug}/favorite`).then((response: any) => {
-      console.log(response.data);
-    });
+    if (isLoggedIn) {
+      httpClient.delete(`articles/${slug}/favorite`).then(() => {
+        getArticles();
+      });
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
     <Row className="px-5 mx-5 mb-5 mt-3 pb-5">
-      <Col lg={9}>
+      <Col lg={9} md={9} sm={9}>
         <Row>
           <Nav variant="tabs" defaultActiveKey="/">
             {isLoggedIn && (
@@ -71,6 +90,18 @@ export const HomePage = () => {
                 Global Feed
               </Nav.Link>
             </Nav.Item>
+
+            {mode === "filter-tags" && (
+              <Nav.Item>
+                <Nav.Link
+                  href=""
+                  className="text-success"
+                  active={mode === "filter-tags"}
+                >
+                  # {filterTag}
+                </Nav.Link>
+              </Nav.Item>
+            )}
           </Nav>
         </Row>
 
@@ -96,11 +127,17 @@ export const HomePage = () => {
                     </p>
                   </div>
                 </div>
-                {/* Tạo hàm xác minh đã like -> isLiked  */}
+
                 <div>
                   <button
-                    onClick={() => favorite(article.slug)}
-                    className="btn-heart btn btn-outline-success d-flex justify-content-center align-items-center mt-3"
+                    onClick={
+                      article.favorited
+                        ? () => unfavorite(article.slug)
+                        : () => favorite(article.slug)
+                    }
+                    className={`btn-heart btn ${
+                      article.favorited ? "btn-success" : "btn-outline-success"
+                    }  d-flex justify-content-center align-items-center mt-3`}
                   >
                     <IoHeart className="mx-1" />{" "}
                     <span>{article.favoritesCount}</span>
@@ -118,20 +155,20 @@ export const HomePage = () => {
                   {article.description}
                 </p>
               </Link>
-              <div className="d-flex justify-content-between">
-                <Link className="read-more" to={`/article/${article.slug}`}>
+              <Link className="read-more" to={`/article/${article.slug}`}>
+                <div className="d-flex justify-content-between">
                   Read more...
-                </Link>
-                <div className="article-tag">
-                  {article.tagList.map((tag: any, index: number) =>
-                    tag ? (
-                      <span key={index}>{tag}</span>
-                    ) : (
-                      <div key={index}></div>
-                    )
-                  )}
+                  <div className="article-tag">
+                    {article.tagList.map((tag: any, index: number) =>
+                      tag ? (
+                        <span key={index}>{tag}</span>
+                      ) : (
+                        <div key={index}></div>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
           ))
         ) : (
@@ -139,17 +176,23 @@ export const HomePage = () => {
         )}
       </Col>
 
-      <Col lg={3}>
+      <Col lg={3} md={3} sm={3}>
         <div className="popular-tags p-2">
           <p className="m-0">Popular Tags</p>
-          <div className="tags">
-            <a>qui</a>
-            <a>et</a>
-            <a>doloribus</a>
-            <a>doloribus</a>
-            <a>doloribus</a>
-            <a>doloribus</a>
-          </div>
+          {tags &&
+            tags.length > 0 &&
+            tags.map((tag: any) => (
+              <div
+                className="tags"
+                onClick={() => {
+                  setFilterTag(tag);
+                  setMode("filter-tags");
+                }}
+                key={tag}
+              >
+                <a>{tag}</a>
+              </div>
+            ))}
         </div>
       </Col>
     </Row>

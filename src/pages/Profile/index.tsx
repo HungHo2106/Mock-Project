@@ -20,13 +20,13 @@ export const ProfilePage = () => {
   const [mode, setMode] = useState("my-articles");
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const getProfile = () => {
     httpClient.get(`profiles/${username}`).then((response: any) => {
       setProfile(response.data);
     });
-  }, [username]);
+  };
 
-  useEffect(() => {
+  const getArticleOfProfile = () => {
     if (mode === "my-articles") {
       httpClient.get(`articles?author=${username}`).then((response: any) => {
         setMyArticle(response.data.articles);
@@ -36,7 +36,15 @@ export const ProfilePage = () => {
         setMyArticle(response.data.articles);
       });
     }
-  }, [username, mode]);
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, [username]);
+
+  useEffect(() => {
+    getArticleOfProfile();
+  }, [mode, username]);
 
   const follow = () => {
     if (isLoggedIn) {
@@ -60,6 +68,18 @@ export const ProfilePage = () => {
     } else {
       navigate("/login");
     }
+  };
+
+  const favorite = (slug: any) => {
+    httpClient.post(`articles/${slug}/favorite`).then((response: any) => {
+      getArticleOfProfile();
+    });
+  };
+
+  const unfavorite = (slug: any) => {
+    httpClient.delete(`articles/${slug}/favorite`).then((response: any) => {
+      getArticleOfProfile();
+    });
   };
 
   return (
@@ -149,35 +169,49 @@ export const ProfilePage = () => {
                           {article.author.username}
                         </Link>
                         <p className="article-date">
-                          {moment(article.updatedAt).format("YYYY M, DD")}
+                          {moment(article.createdAt).format("MMMM D, YYYY")}
                         </p>
                       </div>
                     </div>
-                    <button className="btn-heart btn btn-outline-success d-flex justify-content-center align-items-center mt-3">
+                    <button
+                      className={`btn-heart btn ${
+                        article.favorited
+                          ? "btn-success"
+                          : "btn-outline-success"
+                      }  d-flex justify-content-center align-items-center mt-3`}
+                      onClick={
+                        article.favorited
+                          ? () => unfavorite(article.slug)
+                          : () => favorite(article.slug)
+                      }
+                    >
                       <IoHeart className="mx-1" /> {article.favoritesCount}
                     </button>
                   </div>
                   <Link
-                    to={`article/${article.slug}`}
+                    to={`/article/${article.slug}`}
                     className="text-decoration-none text-secondary"
                   >
-                    <h1 className="article-content">{article.body}</h1>
+                    <h1 className="article-content">{article.title}</h1>
                     <p className="article-description">{article.description}</p>
                   </Link>
-                  <div className="d-flex justify-content-between">
-                    <Link to={`article/${article.slug}`} className="read-more">
+                  <Link
+                    to={`/article/${article.slug}`}
+                    className="read-more text-decoration-none text-secondary"
+                  >
+                    <div className="d-flex justify-content-between">
                       Read more...
-                    </Link>
-                    <div className="article-tag">
-                      {article.tagList.map((tag: any, index: number) =>
-                        tag ? (
-                          <span key={index}>{tag}</span>
-                        ) : (
-                          <div key={index}></div>
-                        )
-                      )}
+                      <div className="article-tag">
+                        {article.tagList.map((tag: any, index: number) =>
+                          tag ? (
+                            <span key={index}>{tag}</span>
+                          ) : (
+                            <div key={index}></div>
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               ))}
           </div>

@@ -21,7 +21,7 @@
 }
 
 .btn-heart {
-  width: 50px;
+  width: 65px;
   height: 30px;
   font-size: 14px;
   padding: 4px 5px;
@@ -46,7 +46,6 @@
 
 .read-more {
   font-size: 12px;
-  opacity: 0.4;
   text-decoration: none;
   color: #000;
   cursor: pointer;
@@ -58,7 +57,7 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 0px 7px;
-  opacity: 0.6;
+  color: #000;
 }
 
 .popular-tags {
@@ -70,10 +69,10 @@
 }
 .tags {
   color: #fff;
+  display: inline-block;
 }
 .tags a {
   background-color: rgb(118, 118, 118);
-  display: inline-block;
   font-size: 11px;
   margin-left: 3px;
   border: 1px solid #ccc;

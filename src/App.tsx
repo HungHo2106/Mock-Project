@@ -26,6 +26,7 @@ function App() {
     },
   });
   const [articles, setArticles] = useState([]);
+  const [commentList, setCommentList] = useState([]);
 
   const contextValue = {
     isLoggedIn,
@@ -34,6 +35,8 @@ function App() {
     setCurrentUser,
     articles,
     setArticles,
+    commentList,
+    setCommentList,
   };
 
   const routers = createBrowserRouter([

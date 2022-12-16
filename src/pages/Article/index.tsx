@@ -1,6 +1,6 @@
 import "./style.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext } from "react";
 import { httpClient } from "../../api/httpClient";
 import { GlobalContext } from "../../globalContext";
 import { IoTrash } from "react-icons/io5";
@@ -21,9 +21,9 @@ export const ArticlePage = () => {
     updatedAt: "",
   });
   const { slug } = useParams();
-  const { currentUser, isLoggedIn } = useContext(GlobalContext);
+  const { currentUser, isLoggedIn, commentList, setCommentList } =
+    useContext(GlobalContext);
   const [comment, setComment] = useState("");
-  const [commentList, setCommentList] = useState([]);
   const [profileUser, setProfileUser] = useState({
     profile: {
       bio: "",
@@ -65,19 +65,26 @@ export const ArticlePage = () => {
   }, []);
 
   useEffect(() => {
-    httpClient
-      .get(`profiles/${articleDetail.author.username}`)
-      .then((response: any) => {
-        setProfileUser(response.data);
-      });
+    if (articleDetail.author.username) {
+      httpClient
+        .get(`profiles/${articleDetail.author.username}`)
+        .then((response: any) => {
+          setProfileUser(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, [articleDetail]);
 
-  console.log(profileUser);
+  const getComment = () => {
+    httpClient.get(`articles/${slug}/comments`).then((response: any) => {
+      setCommentList(response.data.comments, commentList);
+    });
+  };
 
   useEffect(() => {
-    httpClient.get(`articles/${slug}/comments`).then((response: any) => {
-      setCommentList(response.data.comments);
-    });
+    getComment();
   }, [slug]);
 
   const postComment = () => {
@@ -87,10 +94,16 @@ export const ArticlePage = () => {
           body: comment,
         },
       })
-      .then((response: any) => {
-        sessionStorage.setItem("userToken", response.data.user.token);
-        console.log(response.data.comments);
+      .then(() => {
+        getComment();
       });
+    setComment("");
+  };
+
+  const deleteComment = (id: number) => {
+    httpClient.delete(`articles/${slug}/comments/${id}`).then(() => {
+      getComment();
+    });
   };
 
   const deleteArticle = () => {
@@ -100,15 +113,23 @@ export const ArticlePage = () => {
   };
 
   const favorite = () => {
-    httpClient.post(`articles/${slug}/favorite`).then((response: any) => {
-      setArticleDetail(response.data.article);
-    });
+    if (isLoggedIn) {
+      httpClient.post(`articles/${slug}/favorite`).then((response: any) => {
+        setArticleDetail(response.data.article);
+      });
+    } else {
+      navigate("/login");
+    }
   };
 
   const unfavorite = () => {
-    httpClient.delete(`articles/${slug}/favorite`).then((response: any) => {
-      setArticleDetail(response.data.article);
-    });
+    if (isLoggedIn) {
+      httpClient.delete(`articles/${slug}/favorite`).then((response: any) => {
+        setArticleDetail(response.data.article);
+      });
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
@@ -144,12 +165,12 @@ export const ArticlePage = () => {
                 </Link>
               ) : profileUser.profile.following ? (
                 <span onClick={unfollow}>
-                  <FaPlus className="mx-1" />
+                  <FaPlus className="mx-1 my-1" />
                   <span>Unfollow</span> {articleDetail.author.username}
                 </span>
               ) : (
                 <span onClick={follow}>
-                  <FaPlus className="mx-1" />
+                  <FaPlus className="mx-1 my-1" />
                   <span>Follow</span> {articleDetail.author.username}
                 </span>
               )}
@@ -161,7 +182,7 @@ export const ArticlePage = () => {
                 onClick={deleteArticle}
               >
                 <span>
-                  <FaTrashAlt className="mb-1 mx-1" />
+                  <FaTrashAlt className="mb-1 mx-1 my-1" />
                   Delete Article
                 </span>
               </button>
@@ -170,12 +191,12 @@ export const ArticlePage = () => {
                 <span>
                   {articleDetail.favorited ? (
                     <span onClick={unfavorite}>
-                      <FaHeart className="mx-1" /> Unfavorite Post
+                      <FaHeart className="mx-1 my-1" /> Unfavorite Post
                     </span>
                   ) : (
                     <span onClick={favorite}>
                       {" "}
-                      <FaHeart className="mx-1" />
+                      <FaHeart className="mx-1 my-1" />
                       Favorite Post
                     </span>
                   )}{" "}
@@ -335,7 +356,10 @@ export const ArticlePage = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="trash-icon">
+                        <div
+                          className="trash-icon"
+                          onClick={() => deleteComment(comment.id)}
+                        >
                           <IoTrash />
                         </div>
                       </div>

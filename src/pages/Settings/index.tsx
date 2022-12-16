@@ -64,7 +64,7 @@ export const SettingsPage = () => {
               className="form-control  my-3"
               rows={8}
               placeholder="Short bio about you"
-              value={bio}
+              value={bio === null ? undefined : bio}
               onChange={(e: any) => setBio(e.target.value)}
             ></textarea>
             <InputComponent
