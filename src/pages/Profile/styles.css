@@ -3,3 +3,23 @@
   height: 100px;
   border-radius: 50%;
 }
+
+.article-item {
+  border: 2px solid #f08080;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 0 20px 20px 20px;
+}
+
+.article-item:hover {
+  background-color: #2f4f4f;
+  transform: translateY(-5px);
+  transition: all ease 0.4s;
+}
+
+.profile-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

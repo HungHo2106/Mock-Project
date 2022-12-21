@@ -59,60 +59,66 @@ export const CreateEditPage = () => {
 
   return (
     <>
-      <div className="editor-page">
-        <div className="container page">
-          <div className="row">
-            <div className="col-md-10 offset-md-1 col-xs-12">
-              <form onSubmit={(e: any) => e.preventDefault()}>
-                <InputComponent
-                  type="text"
-                  className="form-control my-3 p-2"
-                  placeholder="Article Title"
-                  values={titleArticle}
-                  onChange={(e: any) => setTitleArticle(e.target.value)}
-                />
-                <InputComponent
-                  type="text"
-                  className="form-control my-3"
-                  placeholder="What's this article about?"
-                  values={aboutArticle}
-                  onChange={(e: any) => setAboutArticle(e.target.value)}
-                />
-                <textarea
-                  className="form-control my-3"
-                  rows={8}
-                  placeholder="Write your article (in markdown)"
-                  value={contentArticle}
-                  onChange={(e: any) => setContentArticle(e.target.value)}
-                ></textarea>
-                <InputComponent
-                  type="text"
-                  className="form-control my-3"
-                  placeholder="Enter tags"
-                  values={tagArticle}
-                  onChange={(e: any) => setTagArticle(e.target.value)}
-                />
-                <div className="d-flex justify-content-end">
-                  {slug ? (
-                    <button
-                      className="btn btn-success "
-                      type="button"
-                      onClick={update}
-                    >
-                      Update Article
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-success "
-                      type="button"
-                      onClick={publish}
-                    >
-                      Publish Article
-                    </button>
-                  )}
-                </div>
-              </form>
-            </div>
+      <div className="container page my-4">
+        <div className="row">
+          <div className="col-md-10 offset-md-1 col-xs-12">
+            {slug ? (
+              <h2 className="text-center text-light my-3">Edit New Article</h2>
+            ) : (
+              <h2 className="text-center text-light my-3">
+                Create New Article
+              </h2>
+            )}
+
+            <form onSubmit={(e: any) => e.preventDefault()}>
+              <InputComponent
+                type="text"
+                className="form-control my-3 p-2"
+                placeholder="Article Title"
+                values={titleArticle}
+                onChange={(e: any) => setTitleArticle(e.target.value)}
+              />
+              <InputComponent
+                type="text"
+                className="form-control my-3"
+                placeholder="What's this article about?"
+                values={aboutArticle}
+                onChange={(e: any) => setAboutArticle(e.target.value)}
+              />
+              <textarea
+                className="form-control my-3"
+                rows={8}
+                placeholder="Write your article (in markdown)"
+                value={contentArticle}
+                onChange={(e: any) => setContentArticle(e.target.value)}
+              ></textarea>
+              <InputComponent
+                type="text"
+                className="form-control my-3"
+                placeholder="Enter tags"
+                values={tagArticle}
+                onChange={(e: any) => setTagArticle(e.target.value)}
+              />
+              <div className="d-flex justify-content-end">
+                {slug ? (
+                  <button
+                    className="btn btn-success "
+                    type="button"
+                    onClick={update}
+                  >
+                    Update Article
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-success "
+                    type="button"
+                    onClick={publish}
+                  >
+                    Publish Article
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
         </div>
       </div>

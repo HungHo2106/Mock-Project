@@ -3,20 +3,25 @@ import { Nav, Row } from "react-bootstrap";
 import { IoSettingsSharp, IoHeart } from "react-icons/io5";
 import { FaPlus, FaCheck } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { httpClient } from "../../api/httpClient";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../../globalContext";
+import { NavbarComponent } from "../../components/Navbar";
 import moment from "moment";
 
 export const ProfilePage = () => {
-  const [profile, setProfile] = useState({
-    profile: { image: "", username: "", bio: "", following: "" },
-  });
   const { username } = useParams();
-  const { currentUser, isLoggedIn } = useContext(GlobalContext);
-  const [myArticle, setMyArticle] = useState([]);
+  const {
+    currentUser,
+    isLoggedIn,
+    myArticle,
+    setMyArticle,
+    profile,
+    setProfile,
+  } = useContext(GlobalContext);
+
   const [mode, setMode] = useState("my-articles");
   const navigate = useNavigate();
 
@@ -71,32 +76,57 @@ export const ProfilePage = () => {
   };
 
   const favorite = (slug: any) => {
-    httpClient.post(`articles/${slug}/favorite`).then((response: any) => {
-      getArticleOfProfile();
+    httpClient.post(`articles/${slug}/favorite`).then((res: any) => {
+      if (myArticle && myArticle.length > 0) {
+        setMyArticle(() => {
+          for (let i = 0; i < myArticle.length; i++) {
+            if (myArticle[i].title === res.data.article.title) {
+              myArticle[i].favoritesCount = res.data.article.favoritesCount;
+              myArticle[i].favorited = true;
+              break;
+            }
+          }
+          return [...myArticle];
+        });
+      }
     });
   };
 
   const unfavorite = (slug: any) => {
-    httpClient.delete(`articles/${slug}/favorite`).then((response: any) => {
-      getArticleOfProfile();
+    httpClient.delete(`articles/${slug}/favorite`).then((res: any) => {
+      if (myArticle && myArticle.length > 0) {
+        setMyArticle(() => {
+          for (let i = 0; i < myArticle.length; i++) {
+            if (myArticle[i].title === res.data.article.title) {
+              myArticle[i].favoritesCount = res.data.article.favoritesCount;
+              myArticle[i].favorited = false;
+              break;
+            }
+          }
+          return [...myArticle];
+        });
+      }
     });
   };
 
   return (
     <>
-      <div className="pb-5 mb-5">
-        <div className="user-info py-4 bg-light">
-          <div className="col-12 text-center">
+      <NavbarComponent />
+      <div className="pb-5 mb-4">
+        <div className="py-4 bg-info">
+          <div className="col-12 profile-information">
             <img src={profile.profile.image} className="user-img" alt="" />
-            <h4 className="my-2">{profile.profile.username}</h4>
+            <h2 className="my-2">{profile.profile.username}</h2>
             <p>{profile.profile.bio}</p>
           </div>
           <div className="col-12 d-flex justify-content-end">
             {profile.profile.username === currentUser.user.username ? (
-              <Link to="/settings">
-                <button className="btn btn-sm btn-outline-secondary action-btn mx-4">
-                  <IoSettingsSharp className="mb-1" />{" "}
-                  <span>Edit Profile Settings</span>
+              <Link to="/settings" className="text-decoration-none">
+                <button className="btn btn-sm btn-secondary d-flex align-items-center mx-4">
+                  <span>
+                    <IoSettingsSharp />
+                  </span>
+                  <span className="mx-1 ">Edit Profile Settings</span>
                 </button>
               </Link>
             ) : (
@@ -127,31 +157,34 @@ export const ProfilePage = () => {
           <div className="my-4">
             <Row>
               <Nav variant="tabs" defaultActiveKey="/">
-                <Nav.Item>
-                  <Nav.Link
-                    onClick={() => setMode("my-articles")}
-                    className="text-success"
-                    active={mode === "my-articles"}
-                  >
+                <Nav.Link
+                  onClick={() => setMode("my-articles")}
+                  className="text-success"
+                  active={mode === "my-articles"}
+                >
+                  <Link to={""} className="text-decoration-none text-success">
                     My Articles
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link
-                    onClick={() => setMode("favorited-articles")}
-                    className="text-success"
-                    active={mode === "favorited-articles"}
+                  </Link>
+                </Nav.Link>
+
+                <Nav.Link
+                  onClick={() => setMode("favorited-articles")}
+                  className="text-success"
+                  active={mode === "favorited-articles"}
+                >
+                  <Link
+                    to={`favorites`}
+                    className="text-decoration-none text-success"
                   >
                     Favourited Articles
-                  </Nav.Link>
-                </Nav.Item>
+                  </Link>
+                </Nav.Link>
               </Nav>
             </Row>
 
-            {myArticle &&
-              myArticle.length > 0 &&
+            {myArticle && myArticle.length > 0 ? (
               myArticle.map((article: any, index: number) => (
-                <div key={index}>
+                <div className="article-item" key={index}>
                   <div className="d-flex justify-content-between">
                     <div className="d-flex mt-3">
                       <Link to={`profile/${article.author.username}`}>
@@ -168,16 +201,14 @@ export const ProfilePage = () => {
                         >
                           {article.author.username}
                         </Link>
-                        <p className="article-date">
+                        <p className="article-date text-light">
                           {moment(article.createdAt).format("MMMM D, YYYY")}
                         </p>
                       </div>
                     </div>
                     <button
                       className={`btn-heart btn ${
-                        article.favorited
-                          ? "btn-success"
-                          : "btn-outline-success"
+                        article.favorited ? "btn-danger" : "btn-outline-danger"
                       }  d-flex justify-content-center align-items-center mt-3`}
                       onClick={
                         article.favorited
@@ -190,14 +221,14 @@ export const ProfilePage = () => {
                   </div>
                   <Link
                     to={`/article/${article.slug}`}
-                    className="text-decoration-none text-secondary"
+                    className="text-decoration-none text-light"
                   >
                     <h1 className="article-content">{article.title}</h1>
                     <p className="article-description">{article.description}</p>
                   </Link>
                   <Link
                     to={`/article/${article.slug}`}
-                    className="read-more text-decoration-none text-secondary"
+                    className="read-more text-decoration-none text-light"
                   >
                     <div className="d-flex justify-content-between">
                       Read more...
@@ -213,7 +244,10 @@ export const ProfilePage = () => {
                     </div>
                   </Link>
                 </div>
-              ))}
+              ))
+            ) : (
+              <h5 className="text-light mt-4 text-center">No articles yet</h5>
+            )}
           </div>
         </div>
       </div>

@@ -11,7 +11,6 @@ import { SettingsPage } from "./pages/Settings";
 import { CreateEditPage } from "./pages/Editor";
 import { ArticlePage } from "./pages/Article";
 import { ProfilePage } from "./pages/Profile";
-import { FavouritesPage } from "./pages/Favourites";
 import { GlobalContext } from "./globalContext";
 
 function App() {
@@ -27,6 +26,10 @@ function App() {
   });
   const [articles, setArticles] = useState([]);
   const [commentList, setCommentList] = useState([]);
+  const [myArticle, setMyArticle] = useState([]);
+  const [profile, setProfile] = useState({
+    profile: { image: "", username: "", bio: "", following: "" },
+  });
 
   const contextValue = {
     isLoggedIn,
@@ -37,6 +40,10 @@ function App() {
     setArticles,
     commentList,
     setCommentList,
+    myArticle,
+    setMyArticle,
+    profile,
+    setProfile,
   };
 
   const routers = createBrowserRouter([
@@ -74,15 +81,15 @@ function App() {
           path: "article/:slug",
           element: <ArticlePage />,
         },
+      ],
+    },
+    {
+      path: "profile/:username",
+      element: <ProfilePage />,
+      children: [
         {
-          path: "profile/:username",
+          path: "favorites",
           element: <ProfilePage />,
-          children: [
-            {
-              path: "favourites",
-              element: <FavouritesPage />,
-            },
-          ],
         },
       ],
     },

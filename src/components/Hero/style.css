@@ -1,0 +1,46 @@
+.hero {
+  background-size: cover;
+  height: 90vh;
+  width: 100%;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.image-container {
+  width: 100%;
+  height: 85%;
+  background-image: url("../../assets/images/header_creaturesfeatures_1.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-size: 40px;
+  color: #e64b38;
+  font-family: "Lobster", cursive;
+}
+
+.hero-content {
+  text-align: center;
+  height: 20%;
+}
+
+.hero-content p {
+  margin: 0;
+}
+
+.btn-getstarted {
+  background-color: #e64b38;
+  border-color: #e64b38;
+  font-size: 20px;
+  border-radius: 5px;
+  padding: 5px;
+  color: rgb(70, 233, 211);
+  transition: all ease-in 0.3s;
+}
+
+.btn-getstarted:hover {
+  transform: translateY(-7px);
+  scroll-behavior: smooth;
+}

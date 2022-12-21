@@ -41,9 +41,9 @@ export const SettingsPage = () => {
 
   return (
     <>
-      <div className="row pb-5 mb-5 m-0">
+      <div className="row py-4 mb-5 m-0">
         <div className="col-6 offset-md-3 col-xs-12">
-          <h2 className="text-center my-2">Your Settings</h2>
+          <h2 className="text-center text-light my-2">Your Settings</h2>
 
           <form>
             <InputComponent

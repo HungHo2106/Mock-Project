@@ -1,5 +1,5 @@
 .banner {
-  background-color: rgb(60, 58, 58);
+  background-color: #008080;
   color: #fff;
   padding: 20px 170px;
 }
@@ -18,13 +18,23 @@
   font-size: 20px;
   padding: 20px 120px;
   font-weight: 400;
+  font-family: "EB Garamond", serif;
 }
 
 .trash-icon {
   cursor: pointer;
-  color: rgb(115, 112, 112);
 }
 
 .trash-icon:hover {
   color: #000;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  padding: 7px;
+}
+
+textarea:focus {
+  outline: none;
 }
