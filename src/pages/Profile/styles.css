@@ -1,20 +1,23 @@
+.profile-container {
+  background-color: rgb(237, 238, 240);
+}
+
 .user-img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
+  border: 4px solid #ccc;
 }
 
-.article-item {
-  border: 2px solid #f08080;
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 0 20px 20px 20px;
-}
-
-.article-item:hover {
-  background-color: #2f4f4f;
-  transform: translateY(-5px);
-  transition: all ease 0.4s;
+.action-cover-image {
+  position: absolute;
+  top: 250px;
+  font-size: 30px;
+  padding: 5px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin-left: 15px;
+  cursor: pointer;
 }
 
 .profile-information {
@@ -22,4 +25,108 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 200px;
+}
+
+.cover-image {
+  position: relative;
+  background: url("../../assets/images/anh\ bia.jpg") no-repeat center;
+  object-fit: cover;
+  background-size: cover;
+  background-position: bottom;
+  margin: 0 150px;
+  border-radius: 10px;
+  height: 300px;
+  margin-bottom: 200px;
+}
+
+.profile-tabs {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin: 0 150px;
+  border-top: 2px solid rgb(195, 194, 194);
+  border-bottom: 2px solid rgb(195, 194, 194);
+  height: 60px;
+  width: 100%;
+  font-size: 10px;
+}
+
+.tab {
+  font-size: 20px;
+  border: none;
+}
+
+.article-profile-container {
+  padding: 0 150px;
+}
+
+.menu-icon {
+  font-size: 20px;
+  border: none;
+  background-color: #fff;
+}
+
+.introduce-profile {
+  width: 100%;
+  height: 380px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 15px 0;
+  padding: 20px;
+  box-shadow: 2px 2px #ccc;
+}
+
+.introduce-profile h3 {
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.introduce-btn {
+  padding: 8px 10px;
+  width: 100%;
+  background-color: rgb(224, 223, 223);
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.introduce-btn:hover {
+  background-color: #ccc;
+}
+.address-info {
+  font-size: 15px;
+  margin: 5px 0;
+}
+
+.introduce-icon {
+  font-size: 25px;
+}
+
+.friends-profile {
+  width: 100%;
+  height: 600px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 2px #ccc;
+  padding: 20px;
+}
+
+.friends-profile h3 {
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.friend-item {
+  width: 100px;
+  height: 120px;
+  background-color: #ccc;
+  border-radius: 10px;
+  background: url("../../assets/images/tải\ xuống.jpg") center;
+  object-fit: cover;
+}
+
+.friend-container {
+  display: flex;
 }

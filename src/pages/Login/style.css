@@ -1,10 +1,9 @@
 .login-box {
-  background: linear-gradient(#171738, #2e1760);
+  background-color: rgb(250, 252, 254);
   position: relative;
   width: 400px;
   padding: 40px;
   margin: 70px;
-  background-color: linear-gradient(#006992, #2e1760);
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 6);
   border-radius: 10px;
@@ -15,4 +14,47 @@
   padding: 0;
   color: #fff;
   text-align: center;
+}
+
+.sign-in-left {
+  padding-left: 80px;
+  margin-top: 100px;
+}
+
+.sign-in-left img {
+  width: 500px;
+  height: 150px;
+}
+
+.sign-in-title {
+  margin-left: 70px;
+}
+
+.btn-login-container {
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 20px;
+  padding-bottom: 40px;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background-color: #1b74e4;
+  font-size: 20px;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 2px solid #ccc;
+}
+
+.btn-register {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background-color: rgb(11, 177, 17);
+  font-size: 20px;
+  color: #fff;
+  font-weight: 600;
 }

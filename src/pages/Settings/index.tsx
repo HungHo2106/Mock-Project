@@ -1,21 +1,31 @@
 import { InputComponent } from "../../components/Input";
-import { Button } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../globalContext";
 import { httpClient } from "../../api/httpClient";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentUser } from "../../redux/store/slice/user";
+import "./style.css";
+import { BsFillLockFill } from "react-icons/bs";
+import { SiAdguard } from "react-icons/si";
+import { AiFillSetting } from "react-icons/ai";
+import { FaBookOpen, FaGlobeAsia } from "react-icons/fa";
+import { ImLocation, ImUserMinus } from "react-icons/im";
 
 export const SettingsPage = () => {
   const navigate = useNavigate();
-  const { setIsLoggedIn, currentUser } = useContext(GlobalContext);
-  const [email, setEmail] = useState(currentUser.user.email);
-  const [imageUrl, setImageUrl] = useState(currentUser.user.image);
-  const [username, setUsername] = useState(currentUser.user.username);
-  const [password, setPassword] = useState(currentUser.user.password);
-  const [bio, setBio] = useState(currentUser.user.bio);
+  const { setIsLoggedIn } = useContext(GlobalContext);
+  const currentUser = useSelector((store: any) => store.currentUser);
+  const [email, setEmail] = useState(currentUser.user.user.email);
+  const [imageUrl, setImageUrl] = useState(currentUser.user.user.image);
+  const [username, setUsername] = useState(currentUser.user.user.username);
+  const [password, setPassword] = useState(currentUser.user.user.password);
+  const [bio, setBio] = useState(currentUser.user.user.bio);
+  const [avatar, setAvatar] = useState<any>();
+  const dispatch = useDispatch();
 
-  const { setCurrentUser } = useContext(GlobalContext);
-
+  console.log(imageUrl);
   const updateSettings = () => {
     httpClient
       .put("user", {
@@ -28,70 +38,107 @@ export const SettingsPage = () => {
         },
       })
       .then((response: any) => {
-        setCurrentUser(response.data);
-        navigate(`/profile/${currentUser.user.username}`);
+        dispatch(setCurrentUser(response.data));
+        navigate(`/profile/${response.data.user.username}`);
       });
   };
 
-  const logout = () => {
-    sessionStorage.removeItem("userToken");
-    navigate("/");
-    setIsLoggedIn(false);
+  const handlePreviewImage = (e: any) => {
+    const file = e.target.files[0];
+
+    file.preview = URL.createObjectURL(file);
+
+    setAvatar(file);
+    setImageUrl(file.preview);
   };
 
   return (
-    <>
-      <div className="row py-4 mb-5 m-0">
-        <div className="col-6 offset-md-3 col-xs-12">
-          <h2 className="text-center text-light my-2">Your Settings</h2>
-
+    <Row className="m-0">
+      <Col sm={3} className="p-0">
+        <div className="settings-nav">
+          <h3>Cài đặt</h3>
+          <div className="setting-option">
+            <AiFillSetting className="settings-icon" /> Chung
+          </div>
+          <div className="setting-option">
+            <SiAdguard className="settings-icon" /> Bảo mật{" "}
+          </div>
+          <div className="setting-option">
+            <BsFillLockFill className="settings-icon" /> Quyền riêng tư
+          </div>
+          <div className="setting-option">
+            <FaGlobeAsia className="settings-icon" /> Ngôn ngữ và khu vực
+          </div>
+          <div className="setting-option">
+            <ImLocation className="settings-icon" /> Vị trí
+          </div>
+          <div className="setting-option">
+            <ImUserMinus className="settings-icon" /> Chặn
+          </div>
+          <div className="setting-option">
+            <FaBookOpen className="settings-icon" /> Tin
+          </div>
+        </div>
+      </Col>
+      <Col sm={9} className="p-0">
+        <h4 className="setting-title">Cài đặt tài khoản chung</h4>
+        <div className="settings-container">
           <form>
-            <InputComponent
-              className="form-control my-3"
-              type="text"
-              placeholder="URL of profile picture"
-              values={imageUrl}
-              onChange={(e: any) => setImageUrl(e.target.value)}
-            />
-            <InputComponent
-              className="form-control  my-3"
-              type="text"
-              placeholder="Your Name"
-              values={username}
-              onChange={(e: any) => setUsername(e.target.value)}
-            />
-            <textarea
-              className="form-control  my-3"
-              rows={8}
-              placeholder="Short bio about you"
-              value={bio === null ? undefined : bio}
-              onChange={(e: any) => setBio(e.target.value)}
-            ></textarea>
-            <InputComponent
-              className="form-control  my-3"
-              type="text"
-              placeholder="Email"
-              values={email}
-              onChange={(e: any) => setEmail(e.target.value)}
-            />
-            <InputComponent
-              className="form-control  my-3"
-              type="password"
-              placeholder="Password"
-              values={password}
-              onChange={(e: any) => setPassword(e.target.value)}
-            />
+            <div className="d-flex my-3">
+              <label className="label-settings">Ảnh đại diện:</label>
+              <input type="file" onChange={handlePreviewImage} multiple />
+              {avatar && (
+                <img src={avatar?.preview} alt="" className="avatar-preview" />
+              )}
+            </div>
+            <div className="d-flex my-3">
+              <label className="label-settings">Tên người dùng:</label>
+              <InputComponent
+                className="form-control"
+                type="text"
+                placeholder="Your Name"
+                values={username}
+                onChange={(e: any) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="d-flex my-3">
+              <label className="label-settings ">Tiểu sử:</label>
+              <textarea
+                className="form-control"
+                rows={8}
+                placeholder="Short bio about you"
+                value={bio === null ? undefined : bio}
+                onChange={(e: any) => setBio(e.target.value)}
+              ></textarea>
+            </div>
+            <div className="d-flex my-3">
+              <label className="label-settings">Địa chỉ email:</label>
+              <InputComponent
+                className="form-control"
+                type="text"
+                placeholder="Email"
+                values={email}
+                onChange={(e: any) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="d-flex my-3 ">
+              <label className="label-settings">Mật khẩu:</label>
+              <InputComponent
+                className="form-control"
+                type="password"
+                placeholder="Password"
+                values={password}
+                onChange={(e: any) => setPassword(e.target.value)}
+              />
+            </div>
             <div className="d-flex justify-content-end">
               <Button className="btn btn-success" onClick={updateSettings}>
-                Update Settings
+                Cập nhật cài đặt
               </Button>
             </div>
           </form>
-          <Button variant="danger" onClick={logout}>
-            Or Click here to Log out
-          </Button>
         </div>
-      </div>
-    </>
+      </Col>
+    </Row>
   );
 };

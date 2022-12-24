@@ -1,10 +1,9 @@
 .register-box {
-  background: linear-gradient(#171738, #2e1760);
+  background-color: rgb(250, 252, 254);
   position: relative;
   width: 400px;
   padding: 40px;
   margin: 70px;
-  background-color: linear-gradient(#006992, #2e1760);
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 6);
   border-radius: 10px;
@@ -15,4 +14,12 @@
   padding: 0;
   color: #fff;
   text-align: center;
+}
+
+.btn-register-container {
+  margin-bottom: 20px;
+}
+
+.policy-register {
+  font-size: 13px;
 }

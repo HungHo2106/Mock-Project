@@ -1,0 +1,11 @@
+.editor-container {
+  padding: 50px 350px 100px 350px;
+  background-color: rgb(238, 238, 238);
+}
+
+.basic-multi-select {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 20px;
+  z-index: 9999;
+}

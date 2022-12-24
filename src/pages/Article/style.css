@@ -1,7 +1,7 @@
 .banner {
-  background-color: #008080;
-  color: #fff;
+  color: #000;
   padding: 20px 170px;
+  background-color: rgb(225, 225, 225);
 }
 
 .article-meta {
@@ -15,8 +15,7 @@
 }
 
 .article-body {
-  font-size: 20px;
-  padding: 20px 120px;
+  font-size: 18px;
   font-weight: 400;
   font-family: "EB Garamond", serif;
 }
@@ -37,4 +36,39 @@ textarea {
 
 textarea:focus {
   outline: none;
+}
+
+.article-detail-right {
+  border-left: 2px solid rgb(235, 235, 235);
+  padding: 15px 10px;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.send-btn {
+  border-radius: 50%;
+  background-color: rgb(232, 232, 232);
+  padding: 10px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.image-detail-article {
+  object-fit: cover;
+  width: 100%;
+  height: 100vh;
+  padding: 0 10%;
+  background-color: #000;
+}
+
+.article-detail-close {
+  position: absolute;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  margin: 15px;
+}
+
+.article-detail-close-icon {
+  font-size: 40px;
 }

@@ -13,20 +13,16 @@ import { ArticlePage } from "./pages/Article";
 import { ProfilePage } from "./pages/Profile";
 import { GlobalContext } from "./globalContext";
 
+//import Redux
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import { store, persistor } from "./redux/store";
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({
-    user: {
-      bio: "",
-      email: "",
-      image: "",
-      token: "",
-      username: "",
-    },
-  });
-  const [articles, setArticles] = useState([]);
+  // const [articles, setArticles] = useState([]);
   const [commentList, setCommentList] = useState([]);
-  const [myArticle, setMyArticle] = useState([]);
+  // const [myArticle, setMyArticle] = useState([]);
   const [profile, setProfile] = useState({
     profile: { image: "", username: "", bio: "", following: "" },
   });
@@ -34,14 +30,12 @@ function App() {
   const contextValue = {
     isLoggedIn,
     setIsLoggedIn,
-    currentUser,
-    setCurrentUser,
-    articles,
-    setArticles,
+    // articles,
+    // setArticles,
     commentList,
     setCommentList,
-    myArticle,
-    setMyArticle,
+    // myArticle,
+    // setMyArticle,
     profile,
     setProfile,
   };
@@ -55,14 +49,7 @@ function App() {
           path: "/",
           element: <HomePage />,
         },
-        {
-          path: "login",
-          element: <LoginPage />,
-        },
-        {
-          path: "register",
-          element: <RegisterPage />,
-        },
+
         {
           path: "settings",
           element: <SettingsPage />,
@@ -81,26 +68,37 @@ function App() {
           path: "article/:slug",
           element: <ArticlePage />,
         },
-      ],
-    },
-    {
-      path: "profile/:username",
-      element: <ProfilePage />,
-      children: [
         {
-          path: "favorites",
+          path: "profile/:username",
           element: <ProfilePage />,
+          children: [
+            {
+              path: "favorites",
+              element: <ProfilePage />,
+            },
+          ],
         },
       ],
+    },
+
+    {
+      path: "login",
+      element: <LoginPage />,
+    },
+    {
+      path: "register",
+      element: <RegisterPage />,
     },
   ]);
 
   return (
-    <>
-      <GlobalContext.Provider value={contextValue}>
-        <RouterProvider router={routers} />
-      </GlobalContext.Provider>
-    </>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <GlobalContext.Provider value={contextValue}>
+          <RouterProvider router={routers} />
+        </GlobalContext.Provider>
+      </PersistGate>
+    </Provider>
   );
 }
 

@@ -3,20 +3,25 @@ import { useState, useContext, useEffect } from "react";
 import { httpClient } from "../../api/httpClient";
 import { GlobalContext } from "../../globalContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { setArticles } from "../../redux/store/slice/article";
+import Select from "react-select";
+import "./style.css";
 
 export const CreateEditPage = () => {
   const [titleArticle, setTitleArticle] = useState("");
   const [aboutArticle, setAboutArticle] = useState("");
   const [contentArticle, setContentArticle] = useState("");
   const [tagArticle, setTagArticle] = useState("");
-  const { articles, setArticles } = useContext(GlobalContext);
+  const [tagList, setTagList] = useState([]);
+  const articles = useSelector((store: any) => store.articles);
+
   const navigate = useNavigate();
   const { slug } = useParams();
 
   useEffect(() => {
     if (slug) {
       httpClient.get(`articles/${slug}`).then((response: any) => {
-        console.log(response.data);
         setTitleArticle(response.data.article.title);
         setAboutArticle(response.data.article.description);
         setContentArticle(response.data.article.body);
@@ -24,6 +29,12 @@ export const CreateEditPage = () => {
       });
     }
   }, [slug]);
+
+  useEffect(() => {
+    httpClient.get("tags").then((response: any) => {
+      setTagList(response.data.tags);
+    });
+  }, []);
 
   const update = () => {
     httpClient
@@ -35,7 +46,6 @@ export const CreateEditPage = () => {
         },
       })
       .then((response: any) => {
-        setArticles(response.data.article, articles);
         navigate(`/article/${response.data.article.slug}`);
       })
       .catch((error: any) => console.log(error.data));
@@ -52,52 +62,62 @@ export const CreateEditPage = () => {
         },
       })
       .then((response: any) => {
-        setArticles(response.data.article, articles);
         navigate(`/article/${response.data.article.slug}`);
       });
   };
 
+  const options = tagList.map((tag: any) => {
+    let obj = {
+      value: "",
+      label: "",
+    };
+    obj["value"] = tag;
+    obj["label"] = tag.charAt(0).toUpperCase() + tag.slice(1);
+    return obj;
+  });
+
   return (
     <>
-      <div className="container page my-4">
+      <div className="editor-container ">
         <div className="row">
           <div className="col-md-10 offset-md-1 col-xs-12">
             {slug ? (
-              <h2 className="text-center text-light my-3">Edit New Article</h2>
+              <h2 className="text-center text-dark my-3">Sửa nội dung</h2>
             ) : (
-              <h2 className="text-center text-light my-3">
-                Create New Article
-              </h2>
+              <h2 className="text-center text-dark my-3">Tạo nội dung mới</h2>
             )}
 
             <form onSubmit={(e: any) => e.preventDefault()}>
+              <label>Chủ đề bài viết:</label>
               <InputComponent
                 type="text"
-                className="form-control my-3 p-2"
-                placeholder="Article Title"
+                className="form-control mb-3 p-2"
                 values={titleArticle}
                 onChange={(e: any) => setTitleArticle(e.target.value)}
               />
+              <label>Miêu tả bài viết:</label>
+
               <InputComponent
                 type="text"
-                className="form-control my-3"
-                placeholder="What's this article about?"
+                className="form-control mb-3"
                 values={aboutArticle}
                 onChange={(e: any) => setAboutArticle(e.target.value)}
               />
+              <label>Nội dung bài viết:</label>
+
               <textarea
-                className="form-control my-3"
+                className="form-control mb-3"
                 rows={8}
-                placeholder="Write your article (in markdown)"
                 value={contentArticle}
                 onChange={(e: any) => setContentArticle(e.target.value)}
               ></textarea>
-              <InputComponent
-                type="text"
-                className="form-control my-3"
-                placeholder="Enter tags"
-                values={tagArticle}
-                onChange={(e: any) => setTagArticle(e.target.value)}
+              <label>Thẻ bài viết:</label>
+
+              <Select
+                options={options}
+                isMulti
+                className="basic-multi-select"
+                classNamePrefix="select"
               />
               <div className="d-flex justify-content-end">
                 {slug ? (
@@ -106,7 +126,7 @@ export const CreateEditPage = () => {
                     type="button"
                     onClick={update}
                   >
-                    Update Article
+                    Cập nhật bài viết
                   </button>
                 ) : (
                   <button
@@ -114,7 +134,7 @@ export const CreateEditPage = () => {
                     type="button"
                     onClick={publish}
                   >
-                    Publish Article
+                    Đăng tải bài viết
                   </button>
                 )}
               </div>
