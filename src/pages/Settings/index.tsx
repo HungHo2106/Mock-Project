@@ -52,9 +52,15 @@ export const SettingsPage = () => {
     setImageUrl(file.preview);
   };
 
+  const logout = () => {
+    sessionStorage.removeItem("userToken");
+    navigate("/login");
+    setIsLoggedIn(false);
+  };
+
   return (
     <Row className="m-0">
-      <Col sm={3} className="p-0">
+      <Col xs={12} lg={3} className="p-0">
         <div className="settings-nav">
           <h3>Cài đặt</h3>
           <div className="setting-option">
@@ -137,6 +143,11 @@ export const SettingsPage = () => {
               </Button>
             </div>
           </form>
+        </div>
+        <div className="log-out-container">
+          <Button className="btn btn-danger " onClick={logout}>
+            Đăng xuất tài khoản
+          </Button>
         </div>
       </Col>
     </Row>

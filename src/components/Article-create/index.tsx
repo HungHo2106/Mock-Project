@@ -9,11 +9,13 @@ export const ArticleCreate = () => {
   return (
     <div className="article-create mx-2">
       <div className="article-create-header">
-        <img
-          className="article-avatar"
-          src={currentUser?.user?.user.image}
-          alt=""
-        />
+        <Link to={`profile/${currentUser?.user?.user.username}`}>
+          <img
+            className="article-avatar"
+            src={currentUser?.user?.user.image}
+            alt=""
+          />
+        </Link>
         <Link
           to="/editor"
           className="article-create-input text-decoration-none text-secondary"
@@ -31,7 +33,7 @@ export const ArticleCreate = () => {
         </div>
         <div className="article-create-footer-item">
           <BsFillEmojiSmileFill className="article-footer-icon text-warning" />{" "}
-          Cảm xúc/ Hoạt động
+          Cảm xúc
         </div>
       </div>
     </div>

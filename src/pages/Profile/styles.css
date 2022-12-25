@@ -1,5 +1,6 @@
 .profile-container {
   background-color: rgb(237, 238, 240);
+  width: 100%;
 }
 
 .user-img {
@@ -41,6 +42,12 @@
   margin-bottom: 200px;
 }
 
+.profile-settings-btn button {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
 .profile-tabs {
   display: flex;
   justify-content: start;
@@ -60,6 +67,13 @@
 
 .article-profile-container {
   padding: 0 150px;
+}
+
+.article-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .menu-icon {
@@ -129,4 +143,43 @@
 
 .friend-container {
   display: flex;
+}
+.nav-article-mobile {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  display: flex;
+  padding: 5px;
+  margin-top: 10px;
+  box-shadow: 2px 2px #ccc;
+  justify-content: space-around;
+  display: none;
+}
+
+.nav-article-mobile button {
+  border: none;
+  border-radius: 10px;
+  margin: 0 2px;
+}
+
+@media only screen and (max-width: 992px) {
+  .cover-image {
+    margin: 0;
+  }
+  .article-profile-container {
+    padding: 0;
+  }
+  .nav-tabs {
+    display: none;
+  }
+  .article-profile-container {
+    padding-top: 170px;
+    width: 100%;
+  }
+  .friends-profile {
+    padding: 8px;
+  }
+  .nav-article-mobile {
+    display: flex;
+  }
 }

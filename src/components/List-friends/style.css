@@ -1,8 +1,7 @@
 .list-friend-container {
   padding: 10px;
-  /* background-color: #fff;     */
-  border-radius: 10px;
   margin-top: 20px;
+  border-top: 2px solid #ccc;
 }
 
 .list-friend-header {
@@ -56,4 +55,10 @@
 }
 .list-friend-item:hover {
   background-color: rgb(222, 222, 222);
+}
+
+@media only screen and (max-width: 992px) {
+  .list-friend-container {
+    display: none;
+  }
 }

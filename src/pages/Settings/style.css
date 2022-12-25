@@ -44,3 +44,28 @@
   width: 150px;
   height: 150px;
 }
+
+.log-out-container {
+  margin-bottom: 10px;
+  margin-left: 80px;
+}
+
+@media only screen and (max-width: 992px) {
+  .settings-nav {
+    padding-top: 70px;
+    display: flex;
+    width: 100%;
+    padding-top: 70px;
+    padding-left: 0;
+  }
+  .settings-nav h3 {
+    display: none;
+  }
+  .setting-title {
+    margin: 20px;
+    text-align: center;
+  }
+  .settings-container {
+    margin: 20px;
+  }
+}

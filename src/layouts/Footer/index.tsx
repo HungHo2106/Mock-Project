@@ -40,8 +40,8 @@ export const Footer = () => {
           </li>
         </ul>
         <ul className="copyright">
-          <li>&copy; Untitled</li>
-          <li>
+          <li className="text-center">&copy; Untitled</li>
+          <li className="text-center">
             Design: <Link to="">HungHQ14</Link>
           </li>
         </ul>

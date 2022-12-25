@@ -140,19 +140,19 @@ export const ProfilePage = () => {
 
   return (
     <>
-      <div className="pb-5 mb-4 profile-container">
+      <div className="pb-5 profile-container">
         <div className="cover-image">
           <div className="col-12 profile-information">
             <img src={profile.profile.image} className="user-img" alt="" />
             <h2 className="my-2">{profile.profile.username}</h2>
-            <p>{profile.profile.bio}</p>
-            <div>
+            <p className="m-0">{profile.profile.bio}</p>
+            <div className="profile-settings-btn">
               {profile.profile.username && currentUser.user.user.username ? (
                 profile.profile.username === currentUser.user.user.username ? (
                   <Link to="/settings" className="text-decoration-none">
-                    <button className="btn btn-sm btn-success d-flex align-items-center mx-4">
+                    <button className="btn btn-sm btn-success profile-settings-btn">
                       <IoSettingsSharp />
-                      <span className="mx-1 ">Chỉnh sửa trang cá nhân</span>
+                      <span className="mx-1">Chỉnh sửa trang cá nhân</span>
                     </button>
                   </Link>
                 ) : (
@@ -162,7 +162,7 @@ export const ProfilePage = () => {
                         className="btn btn-sm btn-success action-btn mx-4"
                         onClick={unfollow}
                       >
-                        <FaCheck className="mb-1" />{" "}
+                        <FaCheck className="mx-1" />{" "}
                         <span>Unfollow {profile.profile.username}</span>
                       </button>
                     ) : (
@@ -170,7 +170,7 @@ export const ProfilePage = () => {
                         className="btn btn-sm btn-secondary action-btn mx-4"
                         onClick={follow}
                       >
-                        <FaPlus className="mb-1" />{" "}
+                        <FaPlus className=" mx-1" />{" "}
                         <span>Follow {profile.profile.username}</span>
                       </button>
                     )}
@@ -210,7 +210,7 @@ export const ProfilePage = () => {
         </Nav>
         <div>
           <Row className="m-0 article-profile-container">
-            <Col sm={4}>
+            <Col xs={12} sm={12} lg={4}>
               <div className="introduce-profile">
                 <h3>Giới thiệu</h3>
                 {profile.profile.username === currentUser.user.user.username ? (
@@ -300,7 +300,7 @@ export const ProfilePage = () => {
                 </Row>
               </div>
             </Col>
-            <Col sm={8}>
+            <Col xs={12} sm={12} lg={8}>
               <div className="article-create ">
                 <div className="article-create-header">
                   <img
@@ -330,6 +330,18 @@ export const ProfilePage = () => {
                   </div>
                 </div>
               </div>
+              <div className="nav-article-mobile">
+                <button onClick={() => setMode("my-articles")}>
+                  Tường của tôi
+                </button>
+                <button onClick={() => setMode("favorited-articles")}>
+                  Bài viết yêu thích
+                </button>
+                <button>Giới thiệu</button>
+                <button>Bạn bè</button>
+                <button>Ảnh</button>
+                <button>Check in</button>
+              </div>
               {articleFilterPagine && articleFilterPagine.length > 0 ? (
                 articleFilterPagine.map((article: any, index: number) => (
                   <div className="article-item" key={index}>
@@ -345,7 +357,7 @@ export const ProfilePage = () => {
                         <div className="mx-2">
                           <Link
                             to={`/profile/${article.author.username}`}
-                            className="article-name-user m-0"
+                            className="article-name-user m-0 text-decoration-none text-dark"
                           >
                             {article.author.username}
                           </Link>
@@ -371,16 +383,15 @@ export const ProfilePage = () => {
                       to={`/article/${article.slug}`}
                       className="read-more text-decoration-none text-dark"
                     >
-                      <div className="d-flex justify-content-between">
-                        Read more...
+                      <div className="article-footer">
+                        <span>Read more...</span>
+
                         <div className="article-tag">
-                          {article.tagList.map((tag: any, index: number) =>
-                            tag ? (
-                              <span key={index}>{tag}</span>
-                            ) : (
-                              <div key={index}></div>
-                            )
-                          )}
+                          {article.tagList.map((tag: any, index: number) => (
+                            <div className="tags" key={index}>
+                              {tag ? tag : ""}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </Link>

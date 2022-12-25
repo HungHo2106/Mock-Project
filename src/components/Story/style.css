@@ -105,3 +105,9 @@
   height: 100%;
   border-radius: 50%;
 }
+
+@media only screen and (max-width: 992px) {
+  .story {
+    margin-top: 30px;
+  }
+}

@@ -155,16 +155,51 @@ export const HomePage = () => {
     <>
       <div className="home-container pt-4" id="home-container">
         <Row className="pb-5 mt-3 m-0 ">
-          <Col sm={2} lg={3}>
+          <Col sm={12} lg={3}>
             {isLoggedIn && <NavLeftComponent setMode={setMode} />}
           </Col>
-
           <Col sm={8} lg={6} className="middle">
             <Row className="mx-2 p-0">
               <StoryComponent />
             </Row>
 
             {isLoggedIn ? <ArticleCreate /> : <></>}
+
+            <Row className="p-0 mx-2 my-2 ">
+              <div className="nav-article-mobile">
+                <button onClick={() => setMode("your-feed")}>
+                  Tường của bạn
+                </button>
+                <button onClick={() => setMode("global-feed")}>
+                  Gần đây nhất
+                </button>
+                <button>Bạn bè</button>
+                <Link to="/settings" className="text-decoration-none text-dark">
+                  <button>Cài đặt chung</button>
+                </Link>
+                <button>Video phổ biến</button>
+              </div>
+            </Row>
+
+            <Row className="p-0 mx-2 my-2  ">
+              <div className="popular-tags-mobile ">
+                <p className="m-0">Thẻ xu hướng mới</p>
+                {tags &&
+                  tags.length > 0 &&
+                  tags.map((tag: any) => (
+                    <div
+                      className="tags"
+                      onClick={() => {
+                        setFilterTag(tag);
+                        setMode("filter-tags");
+                      }}
+                      key={tag}
+                    >
+                      <a>{tag}</a>
+                    </div>
+                  ))}
+              </div>
+            </Row>
 
             {mode === "filter-tags" && (
               <div className="filter-article-tags mx-2 mt-2">
@@ -312,8 +347,7 @@ export const HomePage = () => {
               </p>
             )}
           </Col>
-
-          <Col sm={2} lg={2} className="p-0 m-0">
+          <Col sm={3} lg={3} className="right">
             {isLoggedIn && <BirthdayNotiComponent />}
             <div className="popular-tags ">
               <p className="m-0">Thẻ xu hướng mới</p>

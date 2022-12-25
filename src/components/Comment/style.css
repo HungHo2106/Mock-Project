@@ -1,0 +1,32 @@
+.comment-container {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.comment-body {
+  background-color: rgb(232, 232, 232);
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.comment-avatar {
+  width: 35px;
+  height: 35px;
+}
+
+.comment-username {
+  font-size: 18px;
+  font-weight: 600;
+}
+.comment-actions {
+  font-size: 15px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.comment-delete-icon {
+  margin-bottom: 4px;
+  font-size: 18px;
+  color: red;
+}

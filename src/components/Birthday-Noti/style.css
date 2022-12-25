@@ -2,7 +2,7 @@
   width: 100%;
   background-color: #fff;
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
   margin-bottom: 10px;
   box-shadow: 2px 2px #ccc;
 }
@@ -11,4 +11,10 @@
   font-size: 18px;
   padding-top: 10px;
   margin: 0;
+}
+
+@media only screen and (max-width: 992px) {
+  .birthday-noti-container {
+    display: none;
+  }
 }

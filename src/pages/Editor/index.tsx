@@ -1,20 +1,17 @@
 import { InputComponent } from "../../components/Input";
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { httpClient } from "../../api/httpClient";
-import { GlobalContext } from "../../globalContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { setArticles } from "../../redux/store/slice/article";
 import Select from "react-select";
 import "./style.css";
+import { Col, Row } from "react-bootstrap";
 
 export const CreateEditPage = () => {
   const [titleArticle, setTitleArticle] = useState("");
   const [aboutArticle, setAboutArticle] = useState("");
   const [contentArticle, setContentArticle] = useState("");
-  const [tagArticle, setTagArticle] = useState("");
   const [tagList, setTagList] = useState([]);
-  const articles = useSelector((store: any) => store.articles);
+  const [tagChoice, setTagChoice] = useState([]);
 
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -25,7 +22,6 @@ export const CreateEditPage = () => {
         setTitleArticle(response.data.article.title);
         setAboutArticle(response.data.article.description);
         setContentArticle(response.data.article.body);
-        setTagArticle(response.data.article.tagList.map((tag: any) => tag));
       });
     }
   }, [slug]);
@@ -51,21 +47,6 @@ export const CreateEditPage = () => {
       .catch((error: any) => console.log(error.data));
   };
 
-  const publish = () => {
-    httpClient
-      .post("articles", {
-        article: {
-          title: titleArticle,
-          description: aboutArticle,
-          body: contentArticle,
-          tagList: [tagArticle],
-        },
-      })
-      .then((response: any) => {
-        navigate(`/article/${response.data.article.slug}`);
-      });
-  };
-
   const options = tagList.map((tag: any) => {
     let obj = {
       value: "",
@@ -75,12 +56,28 @@ export const CreateEditPage = () => {
     obj["label"] = tag.charAt(0).toUpperCase() + tag.slice(1);
     return obj;
   });
+  const tagArticle = tagChoice.map((op: any) => op.value);
+
+  const publish = () => {
+    httpClient
+      .post("articles", {
+        article: {
+          title: titleArticle,
+          description: aboutArticle,
+          body: contentArticle,
+          tagList: tagArticle,
+        },
+      })
+      .then((response: any) => {
+        navigate(`/article/${response.data.article.slug}`);
+      });
+  };
 
   return (
     <>
       <div className="editor-container ">
-        <div className="row">
-          <div className="col-md-10 offset-md-1 col-xs-12">
+        <Row>
+          <Col xs={12}>
             {slug ? (
               <h2 className="text-center text-dark my-3">Sửa nội dung</h2>
             ) : (
@@ -118,6 +115,7 @@ export const CreateEditPage = () => {
                 isMulti
                 className="basic-multi-select"
                 classNamePrefix="select"
+                onChange={(choice: any) => setTagChoice(choice)}
               />
               <div className="d-flex justify-content-end">
                 {slug ? (
@@ -139,8 +137,8 @@ export const CreateEditPage = () => {
                 )}
               </div>
             </form>
-          </div>
-        </div>
+          </Col>
+        </Row>
       </div>
     </>
   );

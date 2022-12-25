@@ -10,7 +10,7 @@ export const NavLeftComponent = ({ setMode }: any) => {
   const currentUser = useSelector((store: any) => store.currentUser);
 
   return (
-    <>
+    <div className="nav-left-container">
       <Link
         to={`profile/${currentUser?.user?.user.username}`}
         className="text-decoration-none text-dark"
@@ -35,12 +35,14 @@ export const NavLeftComponent = ({ setMode }: any) => {
       <div className="nav-left-item">
         <BsPeopleFill className="nav-left-icon" /> Bạn bè
       </div>
-      <div className="nav-left-item">
-        <IoSettingsSharp className="nav-left-icon" /> Cài đặt chung
-      </div>
+      <Link to="/settings" className="text-decoration-none text-dark">
+        <div className="nav-left-item">
+          <IoSettingsSharp className="nav-left-icon" /> Cài đặt chung
+        </div>
+      </Link>
       <div className="nav-left-item">
         <MdOutlineOndemandVideo className="nav-left-icon" /> Video phổ biến
       </div>
-    </>
+    </div>
   );
 };

@@ -39,7 +39,7 @@ export const LoginPage = () => {
 
   return (
     <Row className="m-0 px-4 mt-5">
-      <Col sm={6}>
+      <Col sm={12} lg={6}>
         <div className="sign-in-left">
           <img src={logoFB} />
           <h4 className="sign-in-title">
@@ -48,7 +48,7 @@ export const LoginPage = () => {
           </h4>
         </div>
       </Col>
-      <Col sm={6}>
+      <Col sm={12} lg={6}>
         <div className="d-flex align-items-center justify-content-center">
           <div className="login-box">
             <div className="row">

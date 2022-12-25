@@ -58,3 +58,21 @@
   color: #fff;
   font-weight: 600;
 }
+
+@media only screen and (max-width: 992px) {
+  .login-box {
+    margin: 0;
+  }
+  .sign-in-left {
+    padding-left: 0;
+  }
+  .sign-in-title {
+    margin-left: 0;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .sign-in-left img {
+    width: 350px;
+    height: 100px;
+  }
+}

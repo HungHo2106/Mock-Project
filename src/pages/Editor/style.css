@@ -1,5 +1,6 @@
 .editor-container {
-  padding: 50px 350px 100px 350px;
+  /* padding: 50px 350px 100px 350px; */
+  padding: 5% 25%;
   background-color: rgb(238, 238, 238);
 }
 
@@ -8,4 +9,10 @@
   height: 100%;
   margin-bottom: 20px;
   z-index: 9999;
+}
+
+@media only screen and (max-width: 992px) {
+  .editor-container {
+    padding: 15% 10% 5% 10%;
+  }
 }

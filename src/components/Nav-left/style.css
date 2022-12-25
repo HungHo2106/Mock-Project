@@ -28,3 +28,13 @@
   font-size: 30px;
   margin-right: 10px;
 }
+
+@media only screen and (max-width: 992px) {
+  .nav-left-item {
+    display: flex;
+  }
+
+  .nav-left-container {
+    display: none;
+  }
+}

@@ -23,3 +23,11 @@
 .policy-register {
   font-size: 13px;
 }
+
+@media only screen and (max-width: 1000px) {
+  .register-box {
+    margin: 0;
+    padding: 20px 30px;
+    margin-bottom: 40px;
+  }
+}

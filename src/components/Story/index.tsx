@@ -11,13 +11,18 @@ import avt3 from "../../assets/images/avt3.jpg";
 import avt1 from "../../assets/images/avt1.jpg";
 import { GlobalContext } from "../../globalContext";
 import userAvatar from "../../assets/images/user-avatar.png";
+import { useNavigate } from "react-router-dom";
 
 export const StoryComponent = () => {
   const currentUser = useSelector((store: any) => store.currentUser);
+  const navigate = useNavigate();
 
   const { isLoggedIn } = useContext(GlobalContext);
+  const handleClick = () => {
+    !isLoggedIn && navigate("/login");
+  };
   return (
-    <div className="story p-0">
+    <div className="story p-0" onClick={handleClick}>
       <div className="cover">
         <div className="create">
           <div className="svg">

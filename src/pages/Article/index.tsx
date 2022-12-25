@@ -13,6 +13,7 @@ import { Col, Row } from "react-bootstrap";
 import { AiOutlineLike } from "react-icons/ai";
 import image from "../../assets/images/str2.jpg";
 import { BsCheckLg } from "react-icons/bs";
+import { CommentComponent } from "../../components/Comment";
 
 export const ArticlePage = () => {
   const [articleDetail, setArticleDetail] = useState({
@@ -148,7 +149,7 @@ export const ArticlePage = () => {
   return (
     <>
       <Row className="m-0 ">
-        <Col sm={8} className="p-0">
+        <Col xs={12} sm={8} className="p-0">
           <div>
             <div
               className="article-detail-close"
@@ -173,7 +174,7 @@ export const ArticlePage = () => {
               )}
               <div className="mx-2">
                 <Link
-                  className="article-name-user m-0"
+                  className="article-name-user text-decoration-none text-dark m-0"
                   to={`/profile/${articleDetail.author.username}`}
                 >
                   {articleDetail.author.username}
@@ -192,7 +193,7 @@ export const ArticlePage = () => {
                 <p>{articleDetail.body}</p>
                 {articleDetail.tagList.map((tag: any, index: number) => (
                   <div className="tags" key={index}>
-                    {tag ? <a key={index}>{tag}</a> : <></>}
+                    {tag ? tag : ""}
                   </div>
                 ))}
               </div>
@@ -324,40 +325,10 @@ export const ArticlePage = () => {
                     {commentList &&
                       commentList.length > 0 &&
                       commentList.map((comment: any) => (
-                        <div className="card my-3" key={comment.id}>
-                          <div className="card-block p-3">
-                            <p className="text-secondary">{comment.body}</p>
-                          </div>
-                          <div className="d-flex  p-2 bg-light align-items-center justify-content-between ">
-                            <div className="d-flex">
-                              <img
-                                className="comment-avatar"
-                                src={comment.author.image}
-                                alt=""
-                              />
-
-                              <div className="d-flex mx-2 flex-row justify-content-between">
-                                <Link
-                                  className="article-date text-decoration-none text-secondary"
-                                  to={`/profile/${comment.author.username}`}
-                                >
-                                  {comment.author.username}
-                                </Link>
-                                <p className="article-date text-secondary m-0 mx-1">
-                                  {moment(comment.createdAt).format(
-                                    "MMMM D, YYYY"
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-                            <div
-                              className="trash-icon"
-                              onClick={() => deleteComment(comment.id)}
-                            >
-                              <IoTrash className="text-danger" />
-                            </div>
-                          </div>
-                        </div>
+                        <CommentComponent
+                          comment={comment}
+                          deleteComment={deleteComment}
+                        />
                       ))}
                   </div>
                 </div>
