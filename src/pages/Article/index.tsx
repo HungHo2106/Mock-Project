@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { httpClient } from "../../api/httpClient";
 import { GlobalContext } from "../../globalContext";
-import { IoCloseSharp, IoHeart, IoTrash } from "react-icons/io5";
+import { IoCloseSharp, IoHeart } from "react-icons/io5";
 import { FaEdit, FaTrashAlt, FaPlus } from "react-icons/fa";
 import { RiSendPlaneFill, RiShareForwardLine } from "react-icons/ri";
 import { AiFillLike } from "react-icons/ai";
@@ -31,6 +31,8 @@ export const ArticlePage = () => {
 
   const { slug } = useParams();
   const { isLoggedIn, commentList, setCommentList } = useContext(GlobalContext);
+  const [isLoadingComment, setIsLoadingComment] = useState(false);
+  const [error, setError] = useState(false);
 
   const currentUser = useSelector((store: any) => store.currentUser);
   const [comment, setComment] = useState("");
@@ -88,8 +90,10 @@ export const ArticlePage = () => {
   }, [articleDetail]);
 
   const getComment = () => {
+    setIsLoadingComment(true);
     httpClient.get(`articles/${slug}/comments`).then((response: any) => {
       setCommentList(response.data.comments, commentList);
+      setIsLoadingComment(false);
     });
   };
 
@@ -98,6 +102,7 @@ export const ArticlePage = () => {
   }, [slug]);
 
   const postComment = () => {
+    setIsLoadingComment(true);
     httpClient
       .post(`articles/${slug}/comments`, {
         comment: {
@@ -106,11 +111,18 @@ export const ArticlePage = () => {
       })
       .then(() => {
         getComment();
+
+        setError(false);
+      })
+      .catch((e: any) => {
+        setIsLoadingComment(false);
+        setError(true);
       });
     setComment("");
   };
 
   const deleteComment = (id: number) => {
+    setIsLoadingComment(true);
     httpClient.delete(`articles/${slug}/comments/${id}`).then(() => {
       getComment();
     });
@@ -148,7 +160,7 @@ export const ArticlePage = () => {
 
   return (
     <>
-      <Row className="m-0 ">
+      <Row className="m-0 article-detail-container ">
         <Col xs={12} sm={8} className="p-0">
           <div>
             <div
@@ -160,7 +172,7 @@ export const ArticlePage = () => {
             <img src={image} className="image-detail-article" alt="" />
           </div>
         </Col>
-        <Col sm={4} className="p-0">
+        <Col xs={12} sm={4} className="p-0">
           <div className=" article-detail-right d-flex flex-column">
             <div className="d-flex align-items-center my-3">
               {articleDetail.author.image ? (
@@ -213,26 +225,26 @@ export const ArticlePage = () => {
               </div>
             </div>
 
-            <div className="article-footer">
-              <button
-                className="btn-article-action"
-                onClick={articleDetail.favorited ? unfavorite : favorite}
-              >
-                {articleDetail.favorited ? (
-                  <AiFillLike className="article-icon text-info" />
-                ) : (
-                  <AiOutlineLike className="article-icon text-info" />
-                )}
+            {articleDetail.author.username &&
+            isLoggedIn &&
+            currentUser.user.user.username ? (
+              articleDetail.author.username ===
+                currentUser.user.user.username &&
+              articleDetail.author.username ? (
+                <>
+                  <div className="article-footer">
+                    <button
+                      className="btn-article-action"
+                      onClick={articleDetail.favorited ? unfavorite : favorite}
+                    >
+                      {articleDetail.favorited ? (
+                        <AiFillLike className="article-icon text-info" />
+                      ) : (
+                        <AiOutlineLike className="article-icon text-info" />
+                      )}
 
-                <span>Thích</span>
-              </button>
-              {articleDetail.author.username &&
-              isLoggedIn &&
-              currentUser.user.user.username ? (
-                articleDetail.author.username ===
-                  currentUser.user.user.username &&
-                articleDetail.author.username ? (
-                  <>
+                      <span>Thích</span>
+                    </button>
                     <button className="btn-article-action">
                       <Link
                         to={`/editor/${slug}`}
@@ -251,9 +263,23 @@ export const ArticlePage = () => {
                       </span>
                       <span>Delete Article</span>
                     </button>
-                  </>
-                ) : (
-                  <>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="article-footer">
+                    <button
+                      className="btn-article-action"
+                      onClick={articleDetail.favorited ? unfavorite : favorite}
+                    >
+                      {articleDetail.favorited ? (
+                        <AiFillLike className="article-icon text-info" />
+                      ) : (
+                        <AiOutlineLike className="article-icon text-info" />
+                      )}
+
+                      <span>Thích</span>
+                    </button>
                     {profileUser.profile.following ? (
                       <button className="btn-article-action">
                         <span
@@ -287,12 +313,12 @@ export const ArticlePage = () => {
                       <RiShareForwardLine className="article-icon text-info" />
                       <span>Chia sẻ</span>
                     </button>
-                  </>
-                )
-              ) : (
-                <></>
-              )}
-            </div>
+                  </div>
+                </>
+              )
+            ) : (
+              <></>
+            )}
 
             {isLoggedIn ? (
               <div className="article-actions">
@@ -316,21 +342,32 @@ export const ArticlePage = () => {
                       value={comment}
                       onChange={(e: any) => setComment(e.target.value)}
                     />
+
                     <div className="send-btn" onClick={postComment}>
-                      <RiSendPlaneFill className="article-icon  text-info" />
+                      <RiSendPlaneFill
+                        className={`article-icon ${
+                          isLoadingComment ? "text-secondary" : "text-info"
+                        }  `}
+                      />
                     </div>
                   </div>
+                  {error && (
+                    <div className="text-danger text-center">
+                      Bình luận không hợp lệ
+                    </div>
+                  )}
 
-                  <div>
-                    {commentList &&
-                      commentList.length > 0 &&
-                      commentList.map((comment: any) => (
+                  {commentList &&
+                    commentList.length > 0 &&
+                    commentList.map((comment: any, index: number) => (
+                      <div key={index}>
                         <CommentComponent
                           comment={comment}
                           deleteComment={deleteComment}
+                          isLoadingComment={isLoadingComment}
                         />
-                      ))}
-                  </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             ) : (

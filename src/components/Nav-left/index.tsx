@@ -32,17 +32,21 @@ export const NavLeftComponent = ({ setMode }: any) => {
         <RiArticleFill className="nav-left-icon" /> Gần đây nhất
       </div>
 
-      <div className="nav-left-item">
-        <BsPeopleFill className="nav-left-icon" /> Bạn bè
-      </div>
+      <Link to={"friends"} className="text-decoration-none text-dark">
+        <div className="nav-left-item">
+          <BsPeopleFill className="nav-left-icon" /> Bạn bè
+        </div>
+      </Link>
       <Link to="/settings" className="text-decoration-none text-dark">
         <div className="nav-left-item">
           <IoSettingsSharp className="nav-left-icon" /> Cài đặt chung
         </div>
       </Link>
-      <div className="nav-left-item">
-        <MdOutlineOndemandVideo className="nav-left-icon" /> Video phổ biến
-      </div>
+      <Link to={"video"} className="text-decoration-none text-dark">
+        <div className="nav-left-item">
+          <MdOutlineOndemandVideo className="nav-left-icon" /> Video phổ biến
+        </div>
+      </Link>
     </div>
   );
 };

@@ -3,20 +3,20 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "./style.css";
 
-export const ModalFriendAcceptRequest = () => {
+export const ModalFriendDeleteRequest = () => {
   const [smShow, setSmShow] = useState(false);
   const [isAccept, setIsAccept] = useState(false);
 
   return (
     <>
       <Button
-        className="btn-info"
+        className="btn-danger"
         onClick={() => {
           setSmShow(true);
           setIsAccept(!isAccept);
         }}
       >
-        {isAccept ? <span>Hoàn tác</span> : <span>Xác nhận</span>}
+        {isAccept ? <span>Hoàn tác</span> : <span>Xóa</span>}
       </Button>
       <Modal
         size="sm"
@@ -28,7 +28,7 @@ export const ModalFriendAcceptRequest = () => {
           <Modal.Title id="example-modal-sizes-title-sm">Thông báo</Modal.Title>
         </Modal.Header>
         {isAccept ? (
-          <Modal.Body>Thêm bạn thành công</Modal.Body>
+          <Modal.Body>Đã xóa thành công</Modal.Body>
         ) : (
           <Modal.Body>Hoàn tác thành công</Modal.Body>
         )}

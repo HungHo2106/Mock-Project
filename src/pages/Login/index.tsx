@@ -35,13 +35,16 @@ export const LoginPage = () => {
       .catch((error: any) => {
         setError(true);
       });
+    // navigate(-1);
   };
 
   return (
     <Row className="m-0 px-4 mt-5">
       <Col sm={12} lg={6}>
         <div className="sign-in-left">
-          <img src={logoFB} />
+          <div className="d-flex justify-content-center">
+            <img src={logoFB} alt="" />
+          </div>
           <h4 className="sign-in-title">
             Facebook giúp bạn kết nối và chia sẻ với mọi người trong cuộc sống
             của bạn.

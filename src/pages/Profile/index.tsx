@@ -1,11 +1,6 @@
 import "./styles.css";
 import { Nav, Row, Col } from "react-bootstrap";
-import {
-  IoSettingsSharp,
-  IoHeart,
-  IoTrash,
-  IoLocationSharp,
-} from "react-icons/io5";
+import { IoSettingsSharp, IoHeart, IoLocationSharp } from "react-icons/io5";
 import { FaPlus, FaCheck } from "react-icons/fa";
 import { AiFillVideoCamera } from "react-icons/ai";
 import {
@@ -14,7 +9,7 @@ import {
   BsThreeDots,
 } from "react-icons/bs";
 import { useContext, useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { httpClient } from "../../api/httpClient";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -28,6 +23,8 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { BsImages } from "react-icons/bs";
 import { FcHome } from "react-icons/fc";
 import { PaginationComponent } from "../../components/Pagination";
+import { ListFriendProfile } from "../../components/List-friends/index2";
+import { CommentComponent } from "../../components/Comment";
 
 export const ProfilePage = () => {
   const { username } = useParams();
@@ -38,6 +35,7 @@ export const ProfilePage = () => {
   const profileArticles = useSelector((store: any) => store.profileArticle);
   const dispatch = useDispatch();
 
+  const [isLoadingComment, setIsLoadingComment] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(3);
   const [mode, setMode] = useState("my-articles");
@@ -124,19 +122,66 @@ export const ProfilePage = () => {
     });
   };
 
-  // const getComment = (slug: any) => {
-  //   httpClient.get(`articles/${slug}/comments`).then((response: any) => {
-  //     setCommentList(response.data.comments, commentList);
-  //   });
-  // };
-
   //Logic Create Pagination
+
   const indexOfLastArticle = currentPage * itemPerPage;
   const indexOfFirstArticle = indexOfLastArticle - itemPerPage;
-  const articleFilterPagine = profileArticles.articles.slice(
+  const articlePagination = profileArticles.articles.slice(
     indexOfFirstArticle,
     indexOfLastArticle
   );
+
+  useEffect(() => {
+    setArticleFilterPagine(articlePagination);
+  }, [currentPage, profileArticles]);
+  const [articleFilterPagine, setArticleFilterPagine] =
+    useState(articlePagination);
+
+  const [slugComment, getSlugComment] = useState("");
+
+  const getComment = () => {
+    setIsLoadingComment(true);
+    if (slugComment)
+      httpClient
+        .get(`articles/${slugComment}/comments`)
+        .then((response: any) => {
+          setCommentList(response.data.comments, commentList);
+          setIsLoadingComment(false);
+        });
+  };
+
+  const renderComment = () => {
+    const indexComment = articleFilterPagine.findIndex(
+      (a: any) => a.slug === slugComment
+    );
+    const newArr = articleFilterPagine.map((a: any, i: number) => {
+      if (i === indexComment) {
+        const articleWithComment = {
+          ...articleFilterPagine[i],
+          comment: commentList,
+        };
+        return articleWithComment;
+      } else {
+        return a;
+      }
+    });
+    setArticleFilterPagine(newArr);
+  };
+
+  const deleteComment = (id: number) => {
+    httpClient
+      .delete(`articles/${slugComment}/comments/${id}`)
+      .then((r: any) => {
+        getComment();
+      });
+  };
+
+  useEffect(() => {
+    getComment();
+  }, [slugComment]);
+  useEffect(() => {
+    renderComment();
+  }, [commentList]);
 
   return (
     <>
@@ -208,6 +253,7 @@ export const ProfilePage = () => {
             </Nav.Item>
           </div>
         </Nav>
+
         <div>
           <Row className="m-0 article-profile-container">
             <Col xs={12} sm={12} lg={4}>
@@ -253,52 +299,7 @@ export const ProfilePage = () => {
                   </button>
                 </Link>
               </div>
-              <div className="friends-profile">
-                <h3>Bạn bè</h3>
-                {profile.profile.username === currentUser.user.user.username ? (
-                  <p>4.999 người bạn</p>
-                ) : (
-                  <p>99 bạn chung</p>
-                )}
-                <Row lg={3} className="friend-container">
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Hung</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Nam</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Dũng</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Mai</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Thảo</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Hưng</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Linh</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Hà</p>
-                  </div>
-                  <div>
-                    <div className="friend-item"></div>
-                    <p className="friend-name">Cường</p>
-                  </div>
-                </Row>
-              </div>
+              <ListFriendProfile profile={profile} currentUser={currentUser} />
             </Col>
             <Col xs={12} sm={12} lg={8}>
               <div className="article-create ">
@@ -347,7 +348,7 @@ export const ProfilePage = () => {
                   <div className="article-item" key={index}>
                     <div className="d-flex justify-content-between">
                       <div className="d-flex mt-3">
-                        <Link to={`profile/${article.author.username}`}>
+                        <Link to={`/profile/${article.author.username}`}>
                           <img
                             src={article.author.image}
                             className="article-avatar mt-2 "
@@ -404,7 +405,9 @@ export const ProfilePage = () => {
                         </span>
                       </div>
                       <div className="cursor-pointer">
-                        <span className="mx-1">Bình luận</span>
+                        <span className="mx-1">
+                          {article.comment && article.comment.length} Bình luận
+                        </span>
                         <span className="mx-1">Chia sẻ</span>
                       </div>
                     </div>
@@ -432,8 +435,8 @@ export const ProfilePage = () => {
                       <button
                         className="btn-article-action"
                         onClick={() => {
-                          setShowComment(!showComment);
-                          // getComment(article.slug);
+                          setShowComment(true);
+                          getSlugComment(article.slug);
                         }}
                       >
                         <TfiComment className="article-icon" />
@@ -463,48 +466,26 @@ export const ProfilePage = () => {
                             </Link>
                           </div>
                         </Link>
-                        {/* <div>
-                          {commentList &&
-                            commentList.length > 0 &&
-                            commentList.map((comment: any) => (
-                              <div className="card my-3" key={comment.id}>
-                                <div className="card-block p-3">
-                                  <p className="text-secondary">
-                                    {comment.body}
-                                  </p>
-                                </div>
-                                <div className="d-flex  p-2 bg-light align-items-center justify-content-between ">
-                                  <div className="d-flex">
-                                    <img
-                                      className="comment-avatar"
-                                      src={comment.author.image}
-                                      alt=""
-                                    />
 
-                                    <div className="d-flex mx-2 flex-row justify-content-between">
-                                      <Link
-                                        className="article-date text-decoration-none text-secondary"
-                                        to={`/profile/${comment.author.username}`}
-                                      >
-                                        {comment.author.username}
-                                      </Link>
-                                      <p className="article-date text-secondary m-0 mx-1">
-                                        {moment(comment.createdAt).format(
-                                          "MMMM D, YYYY"
-                                        )}
-                                      </p>
-                                    </div>
+                        {article.slug === slugComment && isLoadingComment ? (
+                          <div className="d-flex justify-content-center">
+                            <div className="loader"></div>
+                          </div>
+                        ) : (
+                          article.slug === slugComment && (
+                            <div>
+                              {article.comment &&
+                                article.comment.map((comment: any) => (
+                                  <div key={comment.id}>
+                                    <CommentComponent
+                                      comment={comment}
+                                      deleteComment={deleteComment}
+                                    />
                                   </div>
-                                  <div
-                                    className="trash-icon"
-                                    // onClick={() => deleteComment(comment.id)}
-                                  >
-                                    <IoTrash className="text-danger" />
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                        </div> */}
+                                ))}
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </div>
@@ -512,14 +493,16 @@ export const ProfilePage = () => {
               ) : (
                 <h5 className=" mt-4 text-center">Không có bài viết nào</h5>
               )}
-              <div className="d-flex justify-content-center my-3">
-                <PaginationComponent
-                  totalArticles={profileArticles.articles.length}
-                  itemPerPage={itemPerPage}
-                  setCurrentPage={setCurrentPage}
-                  currentPage={currentPage}
-                />
-              </div>
+              {articleFilterPagine && articleFilterPagine.length > 0 && (
+                <div className="d-flex justify-content-center my-3">
+                  <PaginationComponent
+                    totalArticles={profileArticles.articles.length}
+                    itemPerPage={itemPerPage}
+                    setCurrentPage={setCurrentPage}
+                    currentPage={currentPage}
+                  />
+                </div>
+              )}
             </Col>
           </Row>
         </div>

@@ -3,7 +3,7 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import "./style.css";
 import avt1 from "../../assets/images/avt3.jpg";
 
-export const ListFriend = () => {
+export const ListFriendHomePage = () => {
   return (
     <div className="list-friend-container">
       <div className="list-friend-header">

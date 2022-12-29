@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 import "./style.css";
 import like from "../../assets/images/like.svg";
 import { IoTrash } from "react-icons/io5";
-export const CommentComponent = ({ comment, deleteComment }: any) => {
+export const CommentComponent = ({
+  comment,
+  deleteComment,
+  isLoadingComment,
+}: any) => {
   return (
     <Row className="comment-container">
-      <Col xs={2}>
-        <Link to={`profile/${comment.author.username}`}>
+      <Col xs={2} className="p-0 text-center">
+        <Link to={`/profile/${comment.author.username}`}>
           <img className="comment-avatar" src={comment.author.image} alt="" />
         </Link>
       </Col>
@@ -21,7 +25,7 @@ export const CommentComponent = ({ comment, deleteComment }: any) => {
           </Link>
           <p className="text-secondary">{comment.body}</p>
         </div>
-        <div>
+        <div className="mx-3">
           <span className="comment-actions">
             <img src={like} alt="" width={20} height={20} />
             <span>Thích</span>
@@ -30,7 +34,11 @@ export const CommentComponent = ({ comment, deleteComment }: any) => {
             className="comment-actions"
             onClick={() => deleteComment(comment.id)}
           >
-            <IoTrash className="comment-delete-icon" />
+            <IoTrash
+              className={`comment-delete-icon ${
+                isLoadingComment ? "text-secondary" : "text-danger"
+              }`}
+            />
             <span>Xóa</span>
           </span>
         </div>

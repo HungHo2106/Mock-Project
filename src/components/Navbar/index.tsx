@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../globalContext";
 import { MdOutlineOndemandVideo, MdPowerSettingsNew } from "react-icons/md";
@@ -9,15 +9,14 @@ import {
   AiTwotoneSetting,
 } from "react-icons/ai";
 import { CgMenuGridO } from "react-icons/cg";
-import { BsMessenger, BsPen, BsTag } from "react-icons/bs";
+import { BsMessenger, BsPen } from "react-icons/bs";
 import "./style.css";
 import { useSelector } from "react-redux";
 import logoFB from "../../assets/images/fb-logo.png";
 import { FaRegRegistered, FaUserCircle } from "react-icons/fa";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { Col, Row } from "react-bootstrap";
-import avt2 from "../../assets/images/avt2.jpg";
-import { ModalFriendRequestComponent } from "../Modal/index2";
+import { ModalFriendRequestComponent } from "../FriendRequest";
 
 export const NavbarComponent = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(GlobalContext);
@@ -26,6 +25,11 @@ export const NavbarComponent = () => {
 
   const [click, setClick] = useState(false);
   const handleClick = () => setClick(!click);
+
+  const isLogged = sessionStorage.getItem("userToken");
+  useEffect(() => {
+    isLogged && setIsLoggedIn(true);
+  }, []);
 
   const logout = () => {
     sessionStorage.removeItem("userToken");

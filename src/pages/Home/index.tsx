@@ -19,10 +19,11 @@ import { setArticles } from "../../redux/store/slice/article";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLeftComponent } from "../../components/Nav-left";
 import { ArticleCreate } from "../../components/Article-create";
-import { ListFriend } from "../../components/List-friends";
+import { ListFriendHomePage } from "../../components/List-friends";
 import { TutorialComponent } from "../../components/Tutorial";
 import { ModalSaveComponent } from "../../components/Modal";
 import { BirthdayNotiComponent } from "../../components/Birthday-Noti";
+import { CommentComponent } from "../../components/Comment";
 
 export const HomePage = () => {
   const { isLoggedIn } = useContext(GlobalContext);
@@ -30,29 +31,43 @@ export const HomePage = () => {
   const currentUser = useSelector((store: any) => store.currentUser);
 
   const [mode, setMode] = useState("global-feed");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingInfinity, setIsLoadingInfinity] = useState(false);
+  const [isLoadingComment, setIsLoadingComment] = useState(false);
   const [tags, setTags] = useState([]);
   const [filterTag, setFilterTag] = useState("");
   const [showComment, setShowComment] = useState(false);
+  const [slugComment, getSlugComment] = useState("");
+
   const navigate = useNavigate();
 
   const articles = useSelector((store: any) => store.articles);
   const dispatch = useDispatch();
+  const [offset, setOffSet] = useState(0);
+  const [articleInfinity, setArticleInfinity] = useState([
+    ...articles.articles,
+  ]);
 
   const getArticles = () => {
+    setIsLoading(true);
+    setIsLoadingInfinity(false);
     if (mode === "global-feed") {
       httpClient.get("articles").then((response: any) => {
         dispatch(setArticles(response.data.articles));
         setArticleInfinity(response.data.articles);
+        setIsLoading(false);
       });
     } else if (mode === "your-feed") {
       httpClient.get("articles/feed").then((response: any) => {
         dispatch(setArticles(response.data.articles));
         setArticleInfinity(response.data.articles);
+        setIsLoading(false);
       });
     } else if (mode === "filter-tags") {
       httpClient.get(`articles?tag=${filterTag}`).then((response: any) => {
         dispatch(setArticles(response.data.articles));
         setArticleInfinity(response.data.articles);
+        setIsLoading(false);
       });
     }
   };
@@ -67,10 +82,49 @@ export const HomePage = () => {
     getArticles();
   }, [mode, filterTag]);
 
-  const getComment = (slug: any) => {
-    httpClient.get(`articles/${slug}/comments`).then((response: any) => {
-      setCommentList(response.data.comments, commentList);
+  const getComment = () => {
+    setIsLoadingComment(true);
+    if (slugComment)
+      httpClient
+        .get(`articles/${slugComment}/comments`)
+        .then((response: any) => {
+          setCommentList(response.data.comments, commentList);
+          setIsLoadingComment(false);
+        });
+  };
+
+  const renderComment = () => {
+    const indexComment = articleInfinity.findIndex(
+      (a: any) => a.slug === slugComment
+    );
+    const newArr = articleInfinity.map((a: any, i: number) => {
+      if (i === indexComment) {
+        const articleWithComment = {
+          ...articleInfinity[i],
+          comment: commentList,
+        };
+        return articleWithComment;
+      } else {
+        return a;
+      }
     });
+    setArticleInfinity(newArr);
+  };
+
+  useEffect(() => {
+    getComment();
+  }, [slugComment]);
+
+  useEffect(() => {
+    renderComment();
+  }, [commentList]);
+
+  const deleteComment = (id: number) => {
+    httpClient
+      .delete(`articles/${slugComment}/comments/${id}`)
+      .then((r: any) => {
+        getComment();
+      });
   };
 
   const favorite = (slug: any) => {
@@ -109,12 +163,9 @@ export const HomePage = () => {
     }
   };
 
-  const [offset, setOffSet] = useState(0);
-  const [articleInfinity, setArticleInfinity] = useState([
-    ...articles.articles,
-  ]);
-
   useEffect(() => {
+    setIsLoading(false);
+    setIsLoadingInfinity(true);
     if (offset) {
       const loadMoreArticle = () => {
         if (mode === "global-feed") {
@@ -123,6 +174,7 @@ export const HomePage = () => {
             .then((response: any) => {
               let data = response.data.articles;
               setArticleInfinity((prev: any) => [...prev, ...data]);
+              setIsLoadingInfinity(false);
             });
         } else if (mode === "your-feed") {
           httpClient
@@ -130,6 +182,7 @@ export const HomePage = () => {
             .then((response: any) => {
               let data = response.data.articles;
               setArticleInfinity((prev: any) => [...prev, ...data]);
+              setIsLoadingInfinity(false);
             });
         }
       };
@@ -195,7 +248,7 @@ export const HomePage = () => {
                       }}
                       key={tag}
                     >
-                      <a>{tag}</a>
+                      <span>{tag}</span>
                     </div>
                   ))}
               </div>
@@ -206,19 +259,28 @@ export const HomePage = () => {
                 Các bài viết có chủ đề liên quan về: # {filterTag}
               </div>
             )}
-            {articleInfinity && articleInfinity.length > 0 ? (
+            {isLoading ? (
+              <div className="d-flex justify-content-center">
+                <div className="loader"></div>
+              </div>
+            ) : articleInfinity && articleInfinity.length > 0 ? (
               articleInfinity.map((article: any, index: number) => (
                 <div className="article-container article-item " key={index}>
                   <div className=" d-flex justify-content-between pt-3">
                     <div className="d-flex align-items-center">
-                      <img
-                        className="article-avatar "
-                        src={article.author?.image}
-                        alt=""
-                      />
+                      <Link
+                        className="article-name-user m-0"
+                        to={`profile/${article.author.username}`}
+                      >
+                        <img
+                          className="article-avatar "
+                          src={article.author?.image}
+                          alt=""
+                        />
+                      </Link>
                       <div className="mx-2">
                         <Link
-                          className="article-name-user m-0"
+                          className="article-name-user m-0 text-decoration-none text-dark"
                           to={`profile/${article.author.username}`}
                         >
                           {article.author.username}
@@ -276,7 +338,7 @@ export const HomePage = () => {
                     </div>
                     <div className="cursor-pointer">
                       <span className="mx-1">
-                        {commentList.length} Binh luan
+                        {article.comment && article.comment?.length} Binh luan
                       </span>
                       <span className="mx-1">Chia se</span>
                     </div>
@@ -289,7 +351,7 @@ export const HomePage = () => {
                           ? () => unfavorite(article.slug)
                           : () => favorite(article.slug)
                       }
-                      className="btn-article-action"
+                      className={"btn-article-action"}
                     >
                       {article.favorited ? (
                         <>
@@ -306,8 +368,8 @@ export const HomePage = () => {
                     <button
                       className="btn-article-action"
                       onClick={() => {
-                        setShowComment(!showComment);
-                        getComment(article.slug);
+                        setShowComment(true);
+                        getSlugComment(article.slug);
                       }}
                     >
                       <img src={comment} width={20} height={20} alt="" />
@@ -322,7 +384,7 @@ export const HomePage = () => {
                     <div className="comment">
                       <div className="d-flex align-items-center">
                         <Link
-                          to={`/profile/${currentUser?.user?.user.username}`}
+                          to={`profile/${currentUser?.user?.user.username}`}
                         >
                           <img
                             className="article-avatar mx-1"
@@ -337,6 +399,25 @@ export const HomePage = () => {
                           <input type="text" className="input-comment" />
                         </Link>
                       </div>
+                      {article.slug === slugComment && isLoadingComment ? (
+                        <div className="d-flex justify-content-center">
+                          <div className="loader"></div>
+                        </div>
+                      ) : (
+                        article.slug === slugComment && (
+                          <div>
+                            {article.comment &&
+                              article.comment.map((comment: any) => (
+                                <div key={comment.id}>
+                                  <CommentComponent
+                                    comment={comment}
+                                    deleteComment={deleteComment}
+                                  />
+                                </div>
+                              ))}
+                          </div>
+                        )
+                      )}
                     </div>
                   )}
                 </div>
@@ -345,6 +426,12 @@ export const HomePage = () => {
               <p className="mt-3 text-dark text-center">
                 No articles are here...yet
               </p>
+            )}
+
+            {isLoadingInfinity && (
+              <div className="d-flex justify-content-center">
+                <div className="loader"></div>
+              </div>
             )}
           </Col>
           <Col sm={3} lg={3} className="right">
@@ -362,14 +449,14 @@ export const HomePage = () => {
                     }}
                     key={tag}
                   >
-                    <a>{tag}</a>
+                    <span>{tag}</span>
                   </div>
                 ))}
             </div>
 
             {!isLoggedIn && <TutorialComponent />}
 
-            {isLoggedIn && <ListFriend />}
+            {isLoggedIn && <ListFriendHomePage />}
           </Col>
         </Row>
       </div>

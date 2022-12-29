@@ -35,6 +35,40 @@
   margin-right: 10px;
 }
 
+.friends-profile {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 2px #ccc;
+  padding: 20px;
+}
+
+.friends-profile h3 {
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.friend-item {
+  background-color: #ccc;
+  border-radius: 10px;
+  object-fit: cover;
+  text-align: center;
+}
+
+.friend-item img {
+  border-radius: 50%;
+  width: 95%;
+  height: 95%;
+}
+
+.friend-container {
+  display: flex;
+}
+
+.friend-name {
+  text-align: center;
+}
+
 .online-noti {
   position: absolute;
   width: 10px;

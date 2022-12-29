@@ -12,6 +12,7 @@ import { CreateEditPage } from "./pages/Editor";
 import { ArticlePage } from "./pages/Article";
 import { ProfilePage } from "./pages/Profile";
 import { GlobalContext } from "./globalContext";
+import { UnderConstructor } from "./pages/UnderConstructor";
 
 //import Redux
 import { PersistGate } from "redux-persist/integration/react";
@@ -20,9 +21,7 @@ import { store, persistor } from "./redux/store";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [articles, setArticles] = useState([]);
   const [commentList, setCommentList] = useState([]);
-  // const [myArticle, setMyArticle] = useState([]);
   const [profile, setProfile] = useState({
     profile: { image: "", username: "", bio: "", following: "" },
   });
@@ -30,12 +29,8 @@ function App() {
   const contextValue = {
     isLoggedIn,
     setIsLoggedIn,
-    // articles,
-    // setArticles,
     commentList,
     setCommentList,
-    // myArticle,
-    // setMyArticle,
     profile,
     setProfile,
   };
@@ -88,6 +83,14 @@ function App() {
     {
       path: "register",
       element: <RegisterPage />,
+    },
+    {
+      path: "video",
+      element: <UnderConstructor />,
+    },
+    {
+      path: "friends",
+      element: <UnderConstructor />,
     },
   ]);
 
