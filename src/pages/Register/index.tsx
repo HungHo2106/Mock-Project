@@ -8,6 +8,7 @@ import { Row, Col } from "react-bootstrap";
 import logoFB from "../../assets/images/dF5SId3UHWd.svg";
 import { setCurrentUser } from "../../redux/store/slice/user";
 import "./style.css";
+import { useDispatch } from "react-redux";
 
 export const RegisterPage = () => {
   const [error, setError] = useState(false);
@@ -16,6 +17,7 @@ export const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const { setIsLoggedIn } = useContext(GlobalContext);
   const navigate = useNavigate();
+  const dispath = useDispatch();
 
   const register = () => {
     httpClient
@@ -28,7 +30,7 @@ export const RegisterPage = () => {
       })
       .then((response: any) => {
         sessionStorage.setItem("userToken", response.data.user.token);
-        setCurrentUser(response.data);
+        dispath(setCurrentUser(response.data));
         setIsLoggedIn(true);
         navigate("/");
       })

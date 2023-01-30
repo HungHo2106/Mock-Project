@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../globalContext";
 import "./style.css";
 import { setCurrentUser } from "../../redux/store/slice/user";
-import { useDispatch, useSelector } from "react-redux/es/exports";
+import { useDispatch } from "react-redux/es/exports";
 import { Row, Col } from "react-bootstrap";
 import logoFB from "../../assets/images/dF5SId3UHWd.svg";
 
 export const LoginPage = () => {
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState("hohung2106@gmail.com");
-  const [password, setPassword] = useState("2106");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { setIsLoggedIn } = useContext(GlobalContext);
   const dispath = useDispatch();
   const navigate = useNavigate();
@@ -35,7 +35,6 @@ export const LoginPage = () => {
       .catch((error: any) => {
         setError(true);
       });
-    // navigate(-1);
   };
 
   return (

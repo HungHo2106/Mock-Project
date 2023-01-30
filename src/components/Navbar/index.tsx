@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../globalContext";
-import { MdOutlineOndemandVideo, MdPowerSettingsNew } from "react-icons/md";
+import { MdPowerSettingsNew } from "react-icons/md";
 import { IoNotifications, IoPeopleOutline } from "react-icons/io5";
 import {
   AiOutlineHome,
@@ -73,9 +73,7 @@ export const NavbarComponent = () => {
                   }
                   onClick={handleClick}
                 >
-                  <Link to={""} className="text-decoration-none nav-link">
-                    <IoPeopleOutline className="mx-1" />
-                  </Link>
+                  <IoPeopleOutline className="mx-1 text-decoration-none nav-link" />
                   <ModalFriendRequestComponent />
                 </div>
 

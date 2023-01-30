@@ -25,7 +25,6 @@ export const SettingsPage = () => {
   const [avatar, setAvatar] = useState<any>();
   const dispatch = useDispatch();
 
-  console.log(imageUrl);
   const updateSettings = () => {
     httpClient
       .put("user", {

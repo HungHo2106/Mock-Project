@@ -12,6 +12,10 @@ export const CreateEditPage = () => {
   const [contentArticle, setContentArticle] = useState("");
   const [tagList, setTagList] = useState([]);
   const [tagChoice, setTagChoice] = useState([]);
+  const [error, setError] = useState(false);
+  const [errorTitleMessage, setTitleErrorMessage] = useState("");
+  const [errorAboutMessage, setErrorAboutMessage] = useState("");
+  const [errorContentMessage, setErrorContentMessage] = useState("");
 
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -33,18 +37,20 @@ export const CreateEditPage = () => {
   }, []);
 
   const update = () => {
-    httpClient
-      .put(`articles/${slug}`, {
-        article: {
-          title: titleArticle,
-          description: aboutArticle,
-          body: contentArticle,
-        },
-      })
-      .then((response: any) => {
-        navigate(`/article/${response.data.article.slug}`);
-      })
-      .catch((error: any) => console.log(error.data));
+    if (titleArticle && aboutArticle && contentArticle) {
+      httpClient
+        .put(`articles/${slug}`, {
+          article: {
+            title: titleArticle,
+            description: aboutArticle,
+            body: contentArticle,
+          },
+        })
+        .then((response: any) => {
+          navigate(`/article/${response.data.article.slug}`);
+        })
+        .catch((error: any) => console.log(error.data));
+    }
   };
 
   const options = tagList.map((tag: any) => {
@@ -59,18 +65,25 @@ export const CreateEditPage = () => {
   const tagArticle = tagChoice.map((op: any) => op.value);
 
   const publish = () => {
-    httpClient
-      .post("articles", {
-        article: {
-          title: titleArticle,
-          description: aboutArticle,
-          body: contentArticle,
-          tagList: tagArticle,
-        },
-      })
-      .then((response: any) => {
-        navigate(`/article/${response.data.article.slug}`);
-      });
+    if (titleArticle && aboutArticle && contentArticle) {
+      httpClient
+        .post("articles", {
+          article: {
+            title: titleArticle,
+            description: aboutArticle,
+            body: contentArticle,
+            tagList: tagArticle,
+          },
+        })
+        .then((response: any) => {
+          navigate(`/article/${response.data.article.slug}`);
+        });
+    } else {
+      setError(true);
+      setErrorAboutMessage("Miêu tả không hợp lệ");
+      setTitleErrorMessage("Chủ đề không hợp lệ");
+      setErrorContentMessage("Nội dung không hợp lệ");
+    }
   };
 
   return (
@@ -88,26 +101,37 @@ export const CreateEditPage = () => {
               <label>Chủ đề bài viết:</label>
               <InputComponent
                 type="text"
-                className="form-control mb-3 p-2"
+                className="form-control my-1 p-2"
                 values={titleArticle}
                 onChange={(e: any) => setTitleArticle(e.target.value)}
               />
+              {error && titleArticle.trim() === "" && (
+                <p className="mb-2 text-danger">{errorTitleMessage}</p>
+              )}
+
               <label>Miêu tả bài viết:</label>
 
               <InputComponent
                 type="text"
-                className="form-control mb-3"
+                className="form-control my-1"
                 values={aboutArticle}
                 onChange={(e: any) => setAboutArticle(e.target.value)}
               />
+              {error && aboutArticle.trim() === "" && (
+                <p className="mb-2 text-danger">{errorAboutMessage}</p>
+              )}
+
               <label>Nội dung bài viết:</label>
 
               <textarea
-                className="form-control mb-3"
+                className="form-control my-1"
                 rows={8}
                 value={contentArticle}
                 onChange={(e: any) => setContentArticle(e.target.value)}
               ></textarea>
+              {error && contentArticle.trim() === "" && (
+                <p className="mb-2 text-danger">{errorContentMessage}</p>
+              )}
               <label>Thẻ bài viết:</label>
 
               <Select
